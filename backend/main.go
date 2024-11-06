@@ -51,7 +51,7 @@ func main() {
 	r.HandleFunc("/user/register", app.createUser)
 	r.HandleFunc("/user/login", app.loginUser)
 	r.HandleFunc("/user/handleAnswers", app.handleAnswers)
-	r.HandleFunc("/teacher/upload", app.uploadHandler)
+	// r.HandleFunc("/teacher/upload", app.uploadHandler)
 	corsHandler := handlers.CORS(
 		handlers.AllowedOrigins([]string{"*"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),

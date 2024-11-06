@@ -10,7 +10,7 @@ import Register from './pages/Register.jsx';
 import Teacher from './pages/Teacher.jsx';
 import { Toaster } from "@/components/ui/toaster"
 import { Student } from './pages/Student';
-import { ThemeProvider } from './components/theme-provider';
+import TestResults from './components/TestResults';
 
 const router = createBrowserRouter([
   {
@@ -30,6 +30,15 @@ const router = createBrowserRouter([
   ,{
     path: "/student",
     element: <Student />
+  },
+  ,{
+    path: "/teacher/test/:testId",
+    element: <TestResults />,
+    loader: async({request, params }) => {
+      return fetch(`/test/${params.testId}`,
+        { signal: request.signal }
+      )
+    }
   },
 ]);
 

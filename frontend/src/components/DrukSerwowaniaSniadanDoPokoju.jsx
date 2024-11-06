@@ -21,7 +21,7 @@ import { Textarea } from '@/components/ui/textarea'
 
 
 const DrukSerwowaniaSniadanDoPokoju = () => {
-    const thClass = "p-2 border-solid border-2 border-black text-left"
+    const thClass = "p-2 border-solid border-2 border-black text-center"
     const tdClass = "p-2 border-solid border-2 border-black text-left w-3/12"
     const [date, setDate] = useState()
   return (
@@ -97,51 +97,51 @@ const DrukSerwowaniaSniadanDoPokoju = () => {
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Kawa czarna</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Pieczywo mieszane</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Dżem truskawkowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Kawa z mlekiem</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Tosty</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Dżem wiśniowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Herbata czarna</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Rogaliki</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Miód</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Herbata zielona</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Parówki</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Owoce świeże (truskawki)</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Sok pomarańczowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Jajecznica</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Owoce mrożone (truskawki, jagody i mango)</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Sok jabłkowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Jajka sadzone</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Jogurt naturalny</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 w-1/2" type="number" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" placeholder="0" /></td>
         </tr>
        
         <tr>

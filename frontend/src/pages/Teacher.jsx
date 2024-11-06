@@ -7,7 +7,8 @@ import {
     TabsTrigger,
   } from "@/components/ui/tabs"
 import PDFUpload from '@/components/PDFUpload'
-import Dashboard from '@/components/Dashboard'
+import Dashboard from '@/components/TestResults'
+import Testy from '@/components/Testy'
 
 const Teacher = () => {
   return (
@@ -15,15 +16,13 @@ const Teacher = () => {
     <Tabs defaultValue="account" className="w-[1000px]">
       <TabsList className="grid w-full grid-cols-4">
         <TabsTrigger value="upload_pdf">upload_pdf</TabsTrigger>
-        <TabsTrigger value="dashboard">dashboard</TabsTrigger>
+        <TabsTrigger value="testy">testy</TabsTrigger>
       </TabsList>
       <TabsContent value="upload_pdf">
         <PDFUpload />
       </TabsContent>
-      <TabsContent value="dashboard">
-        <Dashboard />
-      </TabsContent>
-      <TabsContent value="2">
+      <TabsContent value="testy">
+        <Testy />
       </TabsContent>
     </Tabs>
     </div>
