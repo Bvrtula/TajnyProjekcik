@@ -4,6 +4,8 @@ go 1.22.2
 
 require github.com/gorilla/handlers v1.5.2
 
+require github.com/mattn/go-sqlite3 v1.14.24 // indirect
+
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect

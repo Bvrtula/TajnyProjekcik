@@ -8,9 +8,9 @@ import (
 	"os"
 
 	"github.com/Bvrtula/TajnyProjekcik/models"
-	_ "github.com/go-sql-driver/mysql"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 type application struct {
@@ -21,15 +21,16 @@ type application struct {
 	pdfs     *models.PDFModel
 }
 
+const file string = "database.db"
+
 func main() {
 	addr := flag.String("addr", ":4000", "HTTP network address")
-	dsn := flag.String("dsn", "root:root@/zs1?parseTime=true", "MySQL data source name")
 	flag.Parse()
 
 	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
 	errorLog := log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
 
-	db, err := openDB(*dsn)
+	db, err := sql.Open("sqlite3", file)
 	if err != nil {
 		errorLog.Fatal(err)
 	}
@@ -44,14 +45,11 @@ func main() {
 		pdfs:     &models.PDFModel{DB: db},
 	}
 
-	// mux := http.NewServeMux()
-	// mux.HandleFunc("/", app.home)
-
 	r := mux.NewRouter()
 	r.HandleFunc("/user/register", app.createUser)
 	r.HandleFunc("/user/login", app.loginUser)
 	r.HandleFunc("/user/handleAnswers", app.handleAnswers)
-	// r.HandleFunc("/teacher/upload", app.uploadHandler)
+	r.HandleFunc("/teacher/upload", app.uploadHandler)
 	corsHandler := handlers.CORS(
 		handlers.AllowedOrigins([]string{"*"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),

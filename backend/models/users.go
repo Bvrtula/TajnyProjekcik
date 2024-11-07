@@ -22,8 +22,8 @@ type UserModel struct {
 
 var ErrNoRecord = errors.New("models: no matching record found")
 
-func (u *UserModel) Register(email, password string) (int, error) {
-	res, err := u.DB.Exec(`INSERT INTO users (email, password) VALUES (?, ?)`, email, password)
+func (u *UserModel) Register(firstname, lastname, class, email, password string) (int, error) {
+	res, err := u.DB.Exec(`INSERT INTO users (firstname, lastname, class, email, password) VALUES (?, ?, ?, ?, ?)`, firstname, lastname, class, email, password)
 	if err != nil {
 		return 0, err
 	}
