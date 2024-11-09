@@ -5,41 +5,57 @@ import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { useNavigate } from 'react-router-dom'
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from '@/AuthContext'
 
 const Login = () => {
+  const { login } = useAuth()
   const [email, setEmail] = useState()
   const [password, setPassword] = useState()
   const { toast } = useToast()
   const navigate = useNavigate()
 
-  const handleSubmit = (event) => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    const userData = {
-    email: email,
-    password: password,
-    }
+    const userData = { email, password };
 
-    console.log(userData)
+    try {
+      const response = await fetch("http://localhost:4000/user/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(userData),
+        credentials: 'include', // Allows cookies to be sent and stored
+      });
 
-    fetch("http://localhost:4000/user/login", {
-    method: "POST",
-    headers: {
-    "Content-Type": "Application/JSON",
-    },
-    body: JSON.stringify(userData),
-    })
-    .then((respose) => respose.json())
-    .then((data) =>  console.log(data))
-    .then(() => navigate('/teacher'))
-    .catch((error) => {
+      if (!response.ok) {
+        throw new Error('Login failed');
+      }
+
+      const data = await response.json();
+      console.log("User data:", data);
+
+      // Store user data in AuthContext
+      login(data); // Assume data contains { id, email, role }
+
+      // Redirect based on role
+      if (data.role === 'teacher') {
+        navigate('/teacher');
+      } else if (data.role === 'student') {
+        navigate('/student');
+      } else {
+        navigate('/');
+      }
+
+    } catch (error) {
       console.log(error);
       toast({
-        title: "Błąd",
-        description: `Nie udało się zalogować: ${error}`,
-    });
-})}
-
-
+        title: "Error",
+        description: `Failed to log in`,
+      });
+    }
+  };
+ 
   return (
 <>
     {/* FORM */}

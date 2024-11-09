@@ -10,15 +10,17 @@ import (
 	"github.com/Bvrtula/TajnyProjekcik/models"
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/gorilla/sessions"
 	_ "github.com/mattn/go-sqlite3"
 )
 
 type application struct {
-	errorLog *log.Logger
-	infoLog  *log.Logger
-	users    *models.UserModel
-	answers  *models.AnswerModel
-	pdfs     *models.PDFModel
+	errorLog     *log.Logger
+	infoLog      *log.Logger
+	users        *models.UserModel
+	answers      *models.AnswerModel
+	sessionStore *sessions.CookieStore
+	pdfs         *models.PDFModel
 }
 
 const file string = "database.db"
@@ -38,22 +40,25 @@ func main() {
 	defer db.Close()
 
 	app := &application{
-		errorLog: errorLog,
-		infoLog:  infoLog,
-		users:    &models.UserModel{DB: db},
-		answers:  &models.AnswerModel{DB: db},
-		pdfs:     &models.PDFModel{DB: db},
+		errorLog:     errorLog,
+		infoLog:      infoLog,
+		users:        &models.UserModel{DB: db},
+		answers:      &models.AnswerModel{DB: db},
+		sessionStore: sessions.NewCookieStore([]byte("gustaw")),
+		pdfs:         &models.PDFModel{DB: db},
 	}
 
 	r := mux.NewRouter()
 	r.HandleFunc("/user/register", app.createUser)
 	r.HandleFunc("/user/login", app.loginUser)
+	r.HandleFunc("/user/logout", app.logoutUser)
 	r.HandleFunc("/user/handleAnswers", app.handleAnswers)
 	r.HandleFunc("/teacher/upload", app.uploadHandler)
 	corsHandler := handlers.CORS(
-		handlers.AllowedOrigins([]string{"*"}),
+		handlers.AllowedOrigins([]string{"http://localhost:5173"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),
-		handlers.AllowedHeaders([]string{"Content-Type"}),
+		handlers.AllowedHeaders([]string{"Content-Type", "auth"}),
+		handlers.AllowCredentials(),
 	)
 
 	srv := &http.Server{

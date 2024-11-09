@@ -33,7 +33,7 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 		app.errorLog.Println(err)
 	}
 
-	id, err := app.users.Register(u.Firstname, u.Lastname, u.Class, u.Email, string(hashedPassword))
+	id, err := app.users.Register(u.Firstname, u.Lastname, u.Class, u.Email, string(hashedPassword), "student")
 	if err != nil {
 		app.errorLog.Println(err)
 	}
@@ -69,9 +69,25 @@ func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		app.clientError(w, 400)
 		return
-	} else {
-		json.NewEncoder(w).Encode(user)
 	}
+
+	session, err := app.sessionStore.Get(r, "auth")
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	session.Values["userId"] = user.Id
+	session.Values["role"] = user.Role
+	session.Save(r, w)
+
+	json.NewEncoder(w).Encode(struct {
+		Id   int    `json:"id"`
+		Role string `json:"role"`
+	}{
+		Id:   user.Id,
+		Role: user.Role,
+	})
 }
 
 func (app *application) handleAnswers(w http.ResponseWriter, r *http.Request) {
@@ -151,4 +167,19 @@ func (app *application) uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "File uploaded successfully: %s", handler.Filename)
 
+}
+
+func (app *application) logoutUser(w http.ResponseWriter, r *http.Request) {
+	session, err := app.sessionStore.Get(r, "auth")
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	// Clear the session
+	session.Options.MaxAge = -1
+	session.Save(r, w)
+
+	w.WriteHeader(http.StatusOK)
+	json.NewEncoder(w).Encode(map[string]string{"message": "Logged out successfully"})
 }

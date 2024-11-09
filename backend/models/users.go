@@ -14,6 +14,7 @@ type User struct {
 	Class     string `json:"class"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
+	Role      string `json:"role"`
 }
 
 type UserModel struct {
@@ -22,8 +23,8 @@ type UserModel struct {
 
 var ErrNoRecord = errors.New("models: no matching record found")
 
-func (u *UserModel) Register(firstname, lastname, class, email, password string) (int, error) {
-	res, err := u.DB.Exec(`INSERT INTO users (firstname, lastname, class, email, password) VALUES (?, ?, ?, ?, ?)`, firstname, lastname, class, email, password)
+func (u *UserModel) Register(firstname, lastname, class, email, password, role string) (int, error) {
+	res, err := u.DB.Exec(`INSERT INTO users (firstname, lastname, class, email, password, role) VALUES (?, ?, ?, ?, ?, ?)`, firstname, lastname, class, email, password, role)
 	if err != nil {
 		return 0, err
 	}
@@ -37,9 +38,9 @@ func (u *UserModel) Register(firstname, lastname, class, email, password string)
 }
 
 func (u *UserModel) Login(email, password string) (*User, error) {
-	row := u.DB.QueryRow(`SELECT id, email, password FROM users WHERE email=?`, email)
+	row := u.DB.QueryRow(`SELECT id, email, password, role FROM users WHERE email=?`, email)
 	user := &User{}
-	err := row.Scan(&user.Id, &user.Email, &user.Password)
+	err := row.Scan(&user.Id, &user.Email, &user.Password, &user.Role)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, ErrNoRecord
@@ -53,3 +54,16 @@ func (u *UserModel) Login(email, password string) (*User, error) {
 	}
 	return user, nil
 }
+
+// func (u *UserModel) GetUser(userId int) (*User, error) {
+// 	row := u.DB.QueryRow(`SELECT * FROM users WHERE userid=?`, userId)
+// 	user := &User{}
+// 	err := row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Class, &user.Email, &user.Role)
+// 	if err != nil {
+// 		if errors.Is(err, sql.ErrNoRows) {
+// 			return nil, ErrNoRecord
+// 		}
+// 		return nil, err
+// 	}
+// 	return user, nil
+// }

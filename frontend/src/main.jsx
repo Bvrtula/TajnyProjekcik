@@ -11,7 +11,8 @@ import Teacher from './pages/Teacher.jsx';
 import { Toaster } from "@/components/ui/toaster"
 import { Student } from './pages/Student';
 import TestResults from './components/TestResults';
-
+import { AuthProvider } from './AuthContext';
+import ProtectedRoute from './ProtectedRoutes';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -25,19 +26,21 @@ const router = createBrowserRouter([
     element: <Login />
   },{
     path: "/teacher",
-    element: <Teacher />
-  },
-  ,{
+    element: (
+      <ProtectedRoute element={<Teacher />} requiredRole="teacher" />
+    ),
+  },{
     path: "/student",
-    element: <Student />
-  },
-  ,{
+    element: (
+      <ProtectedRoute element={<Student />} requiredRole="student" />
+    ),
+  },{
     path: "/teacher/test/:testId",
-    element: <TestResults />,
-    loader: async({request, params }) => {
-      return fetch(`/test/${params.testId}`,
-        { signal: request.signal }
-      )
+    element: (
+      <ProtectedRoute element={<TestResults />} requiredRole="teacher" />
+    ),
+    loader: async({ request, params }) => {
+      return fetch(`/test/${params.testId}`, { signal: request.signal });
     }
   },
 ]);
@@ -46,10 +49,10 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     
     <div>
-    {/* <ThemeProvider> */}
-    <RouterProvider router={router} />
-    <Toaster />
-    {/* </ThemeProvider> */}
+    <AuthProvider >
+      <RouterProvider router={router} />
+      <Toaster />
+    </AuthProvider>
     </div>
   </StrictMode>,
 )
