@@ -42,6 +42,14 @@ const router = createBrowserRouter([
     loader: async({ request, params }) => {
       return fetch(`/test/${params.testId}`, { signal: request.signal });
     }
+  },{
+    path: "/student/test/:testId",
+    element: (
+      <ProtectedRoute element={<TestResults />} requiredRole="student" />
+    ),
+    loader: async({ request, params }) => {
+      return fetch(`/test/${params.testId}`, { signal: request.signal });
+    }
   },
 ]);
 

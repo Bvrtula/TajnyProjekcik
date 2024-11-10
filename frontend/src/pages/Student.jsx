@@ -1,44 +1,47 @@
-import KartaKontrolnaSprzataniaPokoju from '@/components/KartaKontrolnaSprzataniaPokoju'
 import React from 'react'
 import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-  } from "@/components/ui/tabs"
-import DrukSerwowaniaSniadanDoPokoju from '@/components/DrukSerwowaniaSniadanDoPokoju'
-import KwitParkingowy from '@/components/KwitParkingowy'
-import DrukUslugPralniczych from '@/components/DrukUslugPralniczych'
-import WstawkaDlaGosciSpecjalnych from '@/components/WstawkaDlaGosciSpecjalnych'
-
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+  } from "@/components/ui/table"
+import { useNavigate } from 'react-router-dom'
+const data = [
+    {
+    id: 1,
+    testname: "egzamin1",
+    klasa: "4TH",
+    date: "17-02-2024"
+    }, 
+]
 
 export const Student = () => {
+  const navigate = useNavigate()
   return (
-    <div className='w-full flex justify-center'>
-    <Tabs defaultValue="account" className="w-[1400px]">
-      <TabsList className="grid w-full grid-cols-5">
-        <TabsTrigger value="karta_kontrolna_sprzatania_pokoju">karta_kontrolna_sprzatania_pokoju</TabsTrigger>
-        <TabsTrigger value="druk_serwowania_sniadan_do_pokoju">druk_serwowania_sniadan_do_pokoju</TabsTrigger>
-        <TabsTrigger value="kwit_parkingowy">kwit_parkingowy</TabsTrigger>
-        <TabsTrigger value="druk_uslug_pralniczych">druk_uslug_pralniczych</TabsTrigger>
-        <TabsTrigger value="wstawka_dla_gosci_specjalnych">wstawka_dla_gosci_specjalnych</TabsTrigger>
-      </TabsList>
-      <TabsContent value="karta_kontrolna_sprzatania_pokoju">
-        <KartaKontrolnaSprzataniaPokoju />
-      </TabsContent>
-      <TabsContent value="druk_serwowania_sniadan_do_pokoju">
-        <DrukSerwowaniaSniadanDoPokoju />
-      </TabsContent>
-      <TabsContent value="kwit_parkingowy">
-        <KwitParkingowy />
-      </TabsContent>
-      <TabsContent value="druk_uslug_pralniczych">
-        <DrukUslugPralniczych />
-      </TabsContent>
-      <TabsContent value="wstawka_dla_gosci_specjalnych">
-        <WstawkaDlaGosciSpecjalnych />
-      </TabsContent>
-    </Tabs>
-    </div>
-  )
-}
+    <div className='w-[600px] mx-auto'>
+    <h1 className='text-3xl font-bold p-4 my-3'>Twoje egzaminy</h1>
+    <Table>
+        <TableCaption>Lista wszystkich zadanych egzaminów</TableCaption>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Nazwa egzaminu</TableHead>
+            <TableHead>Klasa</TableHead>
+            <TableHead>Data dodania</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {data.map((data) => (
+            <TableRow key={data.data} className="hover:cursor-pointer hover:shadow-xl" onClick={() => navigate(`/student/test/${data.id}`)}>
+              <TableCell ><a className="hover:text-custom-blue cursor-pointer">{data.testname}</a></TableCell>
+              <TableCell >{data.klasa}</TableCell>
+              <TableCell >{data.date}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+      </div>
+)}
