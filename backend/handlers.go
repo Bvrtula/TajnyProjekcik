@@ -12,7 +12,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
-func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
+func (app *application) register(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)
@@ -48,7 +48,7 @@ func (app *application) createUser(w http.ResponseWriter, r *http.Request) {
 
 }
 
-func (app *application) loginUser(w http.ResponseWriter, r *http.Request) {
+func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	if r.Method != http.MethodPost {
 		w.Header().Set("Allow", http.MethodPost)

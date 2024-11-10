@@ -16,11 +16,39 @@ import { useState } from 'react'
 const KwitParkingowy = () => {
     const thClass = "p-2 border-solid border-2 border-black w-3/12"
     const tdClass = " p-2 border-solid border-2 border-black text-left"
-    const [date, setDate] = useState()
+    const [okresKorzystaniaOd, setOkresKorzystaniaOd] = useState()
+    const [okresKorzystaniaDo, setOkresKorzystaniaDo] = useState()
+    
+
+    const [data, setData] = useState({
+      imie_i_nazwisko_goscia: "",
+      nr_pokoju: "",
+      samochod_marki: "",
+      nr_rejestracyjny: "",
+      podpis_pracownika: "",
+    })
+
+    const handleChange = (e) => {
+      const {name, value} = e.target
+      console.log(name, value)
+      setData((prev) => {
+        return {...prev, [name]:value}
+      })
+    }
+
+    const handleSubmit = (e) => {
+      e.preventDefault()
+      
+      data["okres_korzystania_od"] = okresKorzystaniaOd
+      data["okres_korzystania_do"] = okresKorzystaniaDo
+
+      console.log(data)
+    }
+
   return (
     <>
     <div className=' my-[3%]'>
-    <form action="/submit_form" method="post">
+    <form onSubmit={handleSubmit}>
     <table className='w-full border-collapse'>
         <tr>
             <th className={`${thClass} text-center`} colSpan={4}>
@@ -31,7 +59,7 @@ const KwitParkingowy = () => {
             <td className={tdClass} colSpan={4}>
               <h2>Imię i nazwisko gościa / lub nazwa firmy korzystającej z parkingu:</h2>
               <div className='w-full my-2 p-1'>
-                <Input className="h-full" rows={2} />
+                <Input className="h-full" rows={2} name="imie_i_nazwisko_goscia" onChange={handleChange}/>
               </div>
             </td>
         </tr>
@@ -46,29 +74,29 @@ const KwitParkingowy = () => {
               <h2>Od:</h2>
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!date && "text-muted-foreground")}>
+                        <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!okresKorzystaniaOd && "text-muted-foreground")}>
                         <CalendarIcon />
-                        {date ? format(date, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
+                        {okresKorzystaniaOd ? format(okresKorzystaniaOd, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={date} onSelect={setDate}  locale={pl} initialFocus/>
+                        <Calendar mode="single" selected={okresKorzystaniaOd} onSelect={setOkresKorzystaniaOd} name="okres_korzystania_od" locale={pl} initialFocus/>
                     </PopoverContent>
                 </Popover>
               </div>
             </td>
             <td className={tdClass} colSpan={2}>
               <div className='flex justify-start items-center gap-3'>
-              <h2>Od:</h2>
+              <h2>Do:</h2>
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!date && "text-muted-foreground")}>
+                        <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!okresKorzystaniaDo && "text-muted-foreground")}>
                         <CalendarIcon />
-                        {date ? format(date, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
+                        {okresKorzystaniaDo ? format(okresKorzystaniaDo, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
                         </Button>
                     </PopoverTrigger>
                     <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={date} onSelect={setDate}  locale={pl} initialFocus/>
+                        <Calendar mode="single" selected={okresKorzystaniaDo} onSelect={setOkresKorzystaniaDo} locale={pl} initialFocus/>
                     </PopoverContent>
                 </Popover>
               </div>
@@ -78,25 +106,26 @@ const KwitParkingowy = () => {
             <td className={tdClass} colSpan={2}>
               <div className='flex justify-start gap-3 flex-col'>
                 <h2 className='w-[65%]'>Numer pokoju:</h2>
-                <Input type="number" className="h-full" rows={1} />
+                <Input type="number" onChange={handleChange} name="nr_pokoju" className="h-full" rows={1} />
               </div>
             </td>
             <td className={tdClass} colSpan={2}>
               <h2>Samochód marki:</h2>
               <div className='w-full my-2 p-1'>
-                <Input className="h-full" rows={2} />
+                <Input className="h-full" onChange={handleChange} name="samochod_marki" rows={2} />
               </div>
               <h2>Nr rejestracyjny:</h2>
               <div className='w-full my-2 p-1'>
-                <Input className="h-full" rows={2} />
+                <Input className="h-full" onChange={handleChange} name="nr_rejestracyjny" rows={2} />
               </div>
             </td>
         </tr>
         <tr>
             <th className={thClass} colSpan={2}>Podpis pracownika parkingu</th>
-            <td className={tdClass + "h-full"} colSpan={2}><Input type="text" required/></td>
+            <td className={tdClass + "h-full"} colSpan={2}><Input type="text" onChange={handleChange} name="podpis_pracownika" required/></td>
         </tr>
     </table>
+    <Button type="submit">Submit</Button>
     </form>
     </div>
     </>

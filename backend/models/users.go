@@ -54,16 +54,3 @@ func (u *UserModel) Login(email, password string) (*User, error) {
 	}
 	return user, nil
 }
-
-// func (u *UserModel) GetUser(userId int) (*User, error) {
-// 	row := u.DB.QueryRow(`SELECT * FROM users WHERE userid=?`, userId)
-// 	user := &User{}
-// 	err := row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Class, &user.Email, &user.Role)
-// 	if err != nil {
-// 		if errors.Is(err, sql.ErrNoRows) {
-// 			return nil, ErrNoRecord
-// 		}
-// 		return nil, err
-// 	}
-// 	return user, nil
-// }
