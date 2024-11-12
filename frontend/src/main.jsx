@@ -5,6 +5,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+import Test from './pages/Test';
 import Login from './pages/Login.jsx';
 import Register from './pages/Register.jsx';
 import Teacher from './pages/Teacher.jsx';
@@ -35,6 +36,11 @@ const router = createBrowserRouter([
       <ProtectedRoute element={<Student />} requiredRole="student" />
     ),
   },{
+    path: "/student/test",
+    element: (
+      <ProtectedRoute element={<Test />} requiredRole="student" />
+    ),
+  },{
     path: "/teacher/test/:testId",
     element: (
       <ProtectedRoute element={<TestResults />} requiredRole="teacher" />
@@ -45,7 +51,7 @@ const router = createBrowserRouter([
   },{
     path: "/student/test/:testId",
     element: (
-      <ProtectedRoute element={<TestResults />} requiredRole="student" />
+      <ProtectedRoute element={<Test />} requiredRole="student" />
     ),
     loader: async({ request, params }) => {
       return fetch(`/test/${params.testId}`, { signal: request.signal });

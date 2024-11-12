@@ -1,6 +1,5 @@
 import React from 'react'
 import KartaKontrolnaSprzataniaPokoju from '@/components/KartaKontrolnaSprzataniaPokoju'
-import React from 'react'
 import {
     Tabs,
     TabsContent,
@@ -11,11 +10,17 @@ import DrukSerwowaniaSniadanDoPokoju from '@/components/DrukSerwowaniaSniadanDoP
 import KwitParkingowy from '@/components/KwitParkingowy'
 import DrukUslugPralniczych from '@/components/DrukUslugPralniczych'
 import WstawkaDlaGosciSpecjalnych from '@/components/WstawkaDlaGosciSpecjalnych'
+import { Button } from '@/components/ui/button'
+import { useNavigate } from 'react-router-dom'
 
 const Test = () => {
+    const navigate = useNavigate()
   return (
     <>
-        <div>POLECENIE EGZAMINU...</div>
+        <div>
+            POLECENIE EGZAMINU...
+            <Button onClick={() => navigate("/student")}>Powrót</Button>
+        </div>
         <div className='w-full flex justify-center'>
         <Tabs defaultValue="account" className="w-[1400px]">
         <TabsList className="grid w-full grid-cols-5">

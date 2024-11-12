@@ -49,11 +49,12 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	r.HandleFunc("/user/register", app.createUser)
-	r.HandleFunc("/user/login", app.loginUser)
-	r.HandleFunc("/user/logout", app.logoutUser)
-	r.HandleFunc("/user/handleAnswers", app.handleAnswers)
-	r.HandleFunc("/teacher/upload", app.uploadHandler)
+	r.HandleFunc("/user/register", app.register)
+	r.HandleFunc("/user/login", app.login)
+	r.HandleFunc("/user/logout", app.logout)
+	r.HandleFunc("/student/egzaminy", app.serveExams)
+	r.HandleFunc("/student/egzamin/kwitParkingowy", app.handleKwitParkingowy)
+	// r.HandleFunc("/user/handleAnswers", app.handleAnswers)
 	corsHandler := handlers.CORS(
 		handlers.AllowedOrigins([]string{"http://localhost:5173"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),

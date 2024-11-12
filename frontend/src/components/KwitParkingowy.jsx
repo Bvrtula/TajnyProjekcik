@@ -12,13 +12,13 @@ import {
 import { format } from 'date-fns'
 import { pl } from 'date-fns/locale' 
 import { useState } from 'react'
-
+import { useToast } from '@/hooks/use-toast'
 const KwitParkingowy = () => {
     const thClass = "p-2 border-solid border-2 border-black w-3/12"
     const tdClass = " p-2 border-solid border-2 border-black text-left"
     const [okresKorzystaniaOd, setOkresKorzystaniaOd] = useState()
     const [okresKorzystaniaDo, setOkresKorzystaniaDo] = useState()
-    
+    const { toast } = useToast()
 
     const [data, setData] = useState({
       imie_i_nazwisko_goscia: "",
@@ -39,10 +39,31 @@ const KwitParkingowy = () => {
     const handleSubmit = (e) => {
       e.preventDefault()
       
-      data["okres_korzystania_od"] = okresKorzystaniaOd
-      data["okres_korzystania_do"] = okresKorzystaniaDo
+      const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+      data["okres_korzystania_od"] = okresKorzystaniaOd.toLocaleDateString('pl-PL', options)
+      data["okres_korzystania_do"] = okresKorzystaniaDo.toLocaleDateString('pl-PL', options)
 
       console.log(data)
+      fetch("http://localhost:4000/student/egzamin/kwitParkingowy", {
+        method: "POST",
+        headers: {
+        "Content-Type": "Application/JSON",
+        },
+        body: JSON.stringify(data),
+        })
+        .then((respose) => respose.json())
+        .then((data) =>  console.log(data))
+        .then(() => toast({
+          title: "Sukces",
+          description: `Pomyślnie przesłano odpowiedzi`
+        }))
+        .catch((error) => {
+          console.log(error)
+          toast({
+            title: "Błąd",
+            description: `Nie udało się utworzyć użytkownika: ${error}`,
+        });
+        });
     }
 
   return (
