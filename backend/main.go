@@ -48,12 +48,19 @@ func main() {
 		pdfs:         &models.PDFModel{DB: db},
 	}
 
+	app.sessionStore.Options = &sessions.Options{
+		Path:     "/",
+		HttpOnly: true,
+		Secure:   false,
+	}
+
 	r := mux.NewRouter()
 	r.HandleFunc("/user/register", app.register)
 	r.HandleFunc("/user/login", app.login)
 	r.HandleFunc("/user/logout", app.logout)
 	r.HandleFunc("/student/egzaminy", app.serveExams)
 	r.HandleFunc("/student/egzamin/kwitParkingowy", app.handleKwitParkingowy)
+	r.HandleFunc("/student/egzamin/kartaKontrolnaSprzataniaPokoju", app.handleKartaKontrolnaSprzataniaPokoju)
 	// r.HandleFunc("/user/handleAnswers", app.handleAnswers)
 	corsHandler := handlers.CORS(
 		handlers.AllowedOrigins([]string{"http://localhost:5173"}),

@@ -18,29 +18,57 @@ const DrukUslugPralniczych = () => {
     const tdClass = " p-2 border-solid border-2 border-black text-left"
     const [date, setDate] = useState()
 
-    const data = [
+    const el = [
         {
             id:1,
             asortyment: "Koszula damska/męska",
             cena: 23,
+            name:"ilosc_koszula_damska_meska"
         }, {
             id:2,
             asortyment:"Spódnica/ lub spodnie damskie",
-            cena: 28
+            cena: 28,
+            name:"ilosc_spódnica_lub_spodnie_damski"
         }, {
             id: 3,
             asortyment: "Garnitur damski",
-            cena: 45
+            cena: 45,
+            name:"ilosc_garnitur_damski"
         }, {
             id: 4,
             asortyment: "Garnitur męski",
-            cena:48
+            cena:48,
+            name:"ilosc_garnitur_meski"
         }, {
             id: 5,
             asortyment: "Usługa ekspresowa - wykonanie usługi do 5 godzin: dodatkowo płatna",
-            cena: 35
+            cena: 35,
+            name:"ilosc_usluga_ekspresowa"
         }
     ]
+
+    const [value, setValue] = useState()
+
+    const [data, setData] = useState({
+        nazwisko_i_imie_goscia: "",
+        nr_pokoju: "",
+        data_realizacji_uslugi: "",
+        ilosc_koszula_damska_meska: "",
+        ilosc_spódnica_lub_spodnie_damski: "",
+        ilosc_garnitur_damski: "",
+        ilosc_garnitur_meski: "",
+        ilosc_usluga_ekspresowa: "",
+        do_zaplaty: "",
+        podpis_pracownika_realizujacego_zlecenie: "",
+      })
+  
+      const handleChange = (e) => {
+        const {name, value} = e.target
+        console.log(name, value)
+        setData((prev) => {
+          return {...prev, [name]:value}
+        })
+      }
 
   return (
     <>
@@ -57,13 +85,13 @@ const DrukUslugPralniczych = () => {
             <td className={tdClass} colSpan={3}>
                 <h2>Nazwisko i imię gościa:</h2>
                 <div className='w-full my-2 p-1'>
-                <Input className="h-full" rows={2} />
+                <Input className="h-full" rows={2} name="nazwisko_i_imie_goscia" />
                 </div>
             </td>
             <td className={tdClass} colSpan={3}>
                 <h2>Nr pokoju:</h2>
                 <div className='w-full my-2 p-1'>
-                <Input type="number" className="h-full" rows={2} />
+                <Input type="number" className="h-full" rows={2}  name="nazwisko_i_imie_goscia"/>
                 </div>
             </td>
             </tr>
@@ -94,23 +122,23 @@ const DrukUslugPralniczych = () => {
         </thead>
         
         <tbody>
-            {data.map((el) => (
+            {el.map((el) => (
             <tr key={el.id}>
                 <td className={tdClass} colSpan={2}>
-                <h2>{el.asortyment}</h2>
+                    <h2>{el.asortyment}</h2>
                 </td>
                 <td className={tdClass} colSpan={1}>
-                <div className='w-full my-2 p-1'>
-                    <Input type="number" className="h-full" rows={2} />
-                </div>
+                    <div className='w-full my-2 p-1'>
+                        <Input type="number" name={el.name} className="h-full" rows={2} onChange={handleChange} />
+                    </div>
                 </td>
                 <td className={tdClass} colSpan={1}>
-                <h2>{el.cena}</h2>
+                    <h2 id={`price-${el.cena}`}>{el.cena}</h2>
                 </td>
                 <td className={tdClass} colSpan={1}>
-                <div className='w-full my-2 p-1'>
-                    <Input type="number" className="h-full" rows={2} />
-                </div>
+                    <div className='w-full my-2 p-1'>
+                        <Input type="number" className="h-full" rows={2} />
+                    </div>
                 </td>
             </tr>
             ))}

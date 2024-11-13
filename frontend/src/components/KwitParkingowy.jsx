@@ -49,6 +49,7 @@ const KwitParkingowy = () => {
         headers: {
         "Content-Type": "Application/JSON",
         },
+        credentials: "include",
         body: JSON.stringify(data),
         })
         .then((respose) => respose.json())

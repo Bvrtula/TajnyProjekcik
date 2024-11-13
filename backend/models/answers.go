@@ -21,11 +21,20 @@ type Answer struct {
 type KwitParkingowy struct {
 	NrPokoju                             string `json:"nr_pokoju"`
 	ImieINazwiskoGoscia                  string `json:"imie_i_nazwisko_goscia"`
-	OkresKorzystaniaZUslugiParkingowejOd string `json:"okres_korzystania_z_uslugi_parkingowej_od"`
-	OkresKorzystaniaZUslugiParkingowejDo string `json:"okres_korzystania_z_uslugi_parkingowej_do"`
+	OkresKorzystaniaZUslugiParkingowejOd string `json:"okres_korzystania_do"`
+	OkresKorzystaniaZUslugiParkingowejDo string `json:"okres_korzystania_od"`
 	SamochodMarki                        string `json:"samochod_marki"`
 	NrRejestracyjny                      string `json:"nr_rejestracyjny"`
-	PodpisPracownikaParkingu             string `json:"podpis_pracownika_parkingu"`
+	PodpisPracownikaParkingu             string `json:"podpis_pracownika"`
+}
+
+type KartaKontrolnaSprzątaniaPokoju struct {
+	NrPokoju                        string `json:"nr_pokoju"`
+	DataKontroli                    string `json:"data_kontroli"`
+	RodzajSprzatania                string `json:"rodzaj_sprzatania"`
+	DodatkoweZlecenie               string `json:"dodatkowe_zlecenie"`
+	PoprawnoscWykonania             string `json:"poprawnosc_wykonania"`
+	PodpisOsobyRealizujacejKontrole string `json:"podpis_osoby_realizujacej_kontrole"`
 }
 
 type Exam struct {
@@ -35,26 +44,26 @@ type Exam struct {
 	Data  string `json:"data"`
 }
 
-// func (a *AnswerModel) SaveAnswers(userId int, wstawkaDlaGościSpecjalnych, kwitParkingowy, drukUsługPralniczych, drukSerwisowaniaŚniadańDoPokoju, kartaKontrolnaSprzątaniaPokoju string) (int, error) {
-// 	res, err := a.DB.Exec(`INSERT INTO
-// 	answers (userid, wstawka_dla_gości_specjalnych, kwit_parkingowy, druk_usług_pralniczych, druk_serwisowania_śniadań_do_pokoju, karta_kontrolna_sprzątania_pokoju)
-// 	VALUES (?, ?, ?, ?, ?, ?)`, userId, wstawkaDlaGościSpecjalnych, kwitParkingowy, drukUsługPralniczych, drukSerwisowaniaŚniadańDoPokoju, kartaKontrolnaSprzątaniaPokoju)
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	id, err := res.LastInsertId()
-// 	if err != nil {
-// 		return 0, err
-// 	}
-
-// 	return int(id), nil
-// }
-
-func (a *AnswerModel) SaveKwitParkingowy(nr_pokoju, userId, imie_i_nazwisko_goscia, okres_korzystania_z_uslugi_parkingowej_od, okres_korzystania_z_uslugi_parkingowej_do, samochod_marki, nr_rejestracyjny, podpis_pracownika_parkingu string) (int, error) {
+func (a *AnswerModel) SaveKwitParkingowy(userId int, nr_pokoju, imie_i_nazwisko_goscia, okres_korzystania_z_uslugi_parkingowej_od, okres_korzystania_z_uslugi_parkingowej_do, samochod_marki, nr_rejestracyjny, podpis_pracownika_parkingu string) (int, error) {
 	res, err := a.DB.Exec(`INSERT INTO 
 	kwit_parkingowy (imie_i_nazwisko_goscia, okres_korzystania_z_uslugi_parkingowej_od, okres_korzystania_z_uslugi_parkingowej_do, nr_pokoju, samochod_marki, nr_rejestracyjny, podpis_pracownika_parkingu, userid) 
 	VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, imie_i_nazwisko_goscia, okres_korzystania_z_uslugi_parkingowej_od, okres_korzystania_z_uslugi_parkingowej_do, nr_pokoju, samochod_marki, nr_rejestracyjny, podpis_pracownika_parkingu, userId)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func (a *AnswerModel) SaveKartaKontrolnaSprzataniaPokoju(userId int, nr_pokoju, data_kontroli, rodzaj_sprzatania, dodatkowe_zlecenie, poprawnosc_wykonania, podpis_osoby_realizujacej_kontrole string) (int, error) {
+	res, err := a.DB.Exec(`INSERT INTO 
+	karta_kontrolna_sprzatania_pokoju (numer_pokoju, data_kontroli_pokoju, rodzaj_sprzatania_wykonanego_przez_pokojowa, dodatkowe_zlecenie_dla_pokojowej, poprawnosc_wykonania, podpis_osoby_realizujacej_kontrole, userid) 
+	VALUES (?, ?, ?, ?, ?, ?, ?)`, nr_pokoju, data_kontroli, rodzaj_sprzatania, dodatkowe_zlecenie, poprawnosc_wykonania, podpis_osoby_realizujacej_kontrole, userId)
 	if err != nil {
 		return 0, err
 	}

@@ -74,7 +74,6 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 		app.serverError(w, err)
 		return
 	}
-
 	session.Values["userId"] = user.Id
 	session.Values["role"] = user.Role
 	session.Save(r, w)
@@ -88,15 +87,15 @@ func (app *application) login(w http.ResponseWriter, r *http.Request) {
 	})
 }
 
-func (app *application) getUserIdFromSession(r *http.Request) (string, error) {
+func (app *application) getUserIdFromSession(r *http.Request) (int, error) {
 	session, err := app.sessionStore.Get(r, "auth")
 	if err != nil {
-		return "", err
+		return 0, err
 	}
 
-	userId, ok := session.Values["userId"].(string)
-	if !ok || userId == "" {
-		return "", errors.New("user not authenticated")
+	userId, ok := session.Values["userId"].(int)
+	if !ok || userId == 0 {
+		return 0, errors.New("user not authenticated")
 	}
 	fmt.Print("userid ", userId)
 	return userId, nil
@@ -130,9 +129,45 @@ func (app *application) handleKwitParkingowy(w http.ResponseWriter, r *http.Requ
 	if err != nil {
 		app.serverError(w, err)
 	}
-	var data models.KwitParkingowy
 
-	id, err := app.answers.SaveKwitParkingowy(data.NrPokoju, userId, data.ImieINazwiskoGoscia, data.OkresKorzystaniaZUslugiParkingowejOd, data.OkresKorzystaniaZUslugiParkingowejDo, data.SamochodMarki, data.NrRejestracyjny, data.PodpisPracownikaParkingu)
+	var data models.KwitParkingowy
+	err = json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		app.notFound(w)
+		app.errorLog.Println(err)
+	}
+
+	id, err := app.answers.SaveKwitParkingowy(userId, data.NrPokoju, data.ImieINazwiskoGoscia, data.OkresKorzystaniaZUslugiParkingowejOd, data.OkresKorzystaniaZUslugiParkingowejDo, data.SamochodMarki, data.NrRejestracyjny, data.PodpisPracownikaParkingu)
+
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprint("succesfully insterted row with id ", id)})
+}
+
+func (app *application) handleKartaKontrolnaSprzataniaPokoju(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	userId, err := app.getUserIdFromSession(r)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	var data models.KartaKontrolnaSprzątaniaPokoju
+	err = json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		app.notFound(w)
+		app.errorLog.Println(err)
+	}
+
+	id, err := app.answers.SaveKartaKontrolnaSprzataniaPokoju(userId, data.NrPokoju, data.DataKontroli, data.RodzajSprzatania, data.DodatkoweZlecenie, data.PoprawnoscWykonania, data.PodpisOsobyRealizujacejKontrole)
 
 	if err != nil {
 		app.serverError(w, err)
