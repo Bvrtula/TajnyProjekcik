@@ -16,6 +16,9 @@ import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from '@/components/ui/textarea'
 
+
+
+
 const dostarczoneProduktyIUsługi = [
     {
     id:1,
@@ -47,6 +50,30 @@ const WstawkaDlaGosciSpecjalnych = () => {
     const thClass = "p-2 border-solid border-2 border-black w-3/12"
     const tdClass = " p-2 border-solid border-2 border-black text-left"
     const [date, setDate] = useState()
+    const [data, setData] = useState({
+        termin_pobytu_od: "",
+        termin_pobytu_do: "",
+        liczba_osob: "",
+        nr_pokoju: "",
+        termin_wykonania_uslugi: "",
+        zyczenia_dodatkowe: "",
+        kosz_prezentowy: "",
+        cena_za_wybrana_wstawke: "",
+        dodatkowe_oplaty: "",
+        razem_do_zaplaty: "",
+        data_zlecenia_uslugi: "",
+        podpis_pracownika_recepcji: "",
+        podpis_dyrektora_hotelu: ""
+    });
+
+    const handleChange = (e) => {
+        const [name, value] = e.target
+        console.log(name, value)
+        setData((prev) => {
+            return {...prev, [name]:value}
+        })
+    }
+
   return (
     <>
     <div className=' my-[3%]'>
@@ -94,13 +121,13 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 <td className={tdClass} colSpan={1}>
                     <h2>Liczba osób:</h2>
                     <div className='w-full my-2 p-1'>
-                    <Input type="number" className="h-full" rows={2} />
+                    <Input type="number" className="h-full" onChange={handleChange} name="liczba_osob" rows={2} />
                     </div>
                 </td>
                 <td className={tdClass} colSpan={1}>
                     <h2>Numer pokoju:</h2>
                     <div className='w-full my-2 p-1'>
-                    <Input type="number" className="h-full" rows={2} />
+                    <Input type="number" className="h-full" onChange={handleChange} name="nr_pokoju" rows={2} />
                     </div>
                 </td>
             </tr>
@@ -139,13 +166,13 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 <td className={tdClass} colSpan={3}>
                     <h2>Życzenia dodatkowe:</h2>
                     <div className=' my-2'>
-                        <Textarea className="h-full" rows={2} />
+                        <Textarea className="h-full" onChange={handleChange} name="zyczenia_dodatkowe" rows={2} />
                     </div>
                 </td>
                 <td className={tdClass} colSpan={3}>
                     <h2>Kosz prezentowy:</h2>
                     <div className=' my-2'>
-                        <Textarea className="h-full" rows={2} />
+                        <Textarea className="h-full" rows={2} onChange={handleChange} name="kosz_prezentowy"/>
                     </div>
                 </td>
             </tr>
@@ -153,21 +180,23 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 <td className={tdClass} colSpan={3}>
                     <h2>Cena za wybraną wstawkę:</h2>
                     <div className='w-full my-2 p-1'>
-                    <Input type="number" className="h-full" rows={2} />
+                    <Input type="number" className="h-full" onChange={handleChange} name="cena_za_wybrana_wstawke" rows={2} />
                     </div>
                 </td> 
                 <td className={tdClass} colSpan={3}>
                     <h2>Dodatkowe opłaty:</h2>
                     <div className='w-full my-2 p-1'>
-                    <Input type="number" className="h-full" rows={2} />
+                    <Input type="number" className="h-full" onChange={handleChange} name="dodatkowe_oplaty" rows={2} />
                     </div>
                 </td> 
             </tr>
             <tr>
                 <td className={tdClass} colSpan={6}>
-                    <h2>Razem do zapłaty za realizację usługi:</h2>
-                    <div className='w-full my-2 p-1'>
-                    
+                    <div className='flex items-center gap-2'>
+                        <h2>Razem do zapłaty za realizację usługi:</h2>
+                        <div className='w-1/4 my-2 p-1'>
+                            <Input type="number" className="h-full" onChange={handleChange} name="razem_do_zaplaty" rows={2} />
+                        </div>
                     </div>
                 </td> 
             </tr>
@@ -189,13 +218,13 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 <td className={tdClass} colSpan={3}>
                     <h2>Podpis pracownika recepcji:</h2>
                     <div className='w-full my-2 p-1'>
-                        <Input type="text" className="h-full" rows={2} />
+                        <Input type="text" className="h-full" onChange={handleChange} name="podpis_pracownika_recepcji" rows={2} />
                     </div>
                 </td>
                 <td className={tdClass} colSpan={1}>
                     <h2>Podpis dyrektora hotelu:</h2>
                     <div className='w-full my-2 p-1'>
-                        <Input type="text" className="h-full" rows={2} />
+                        <Input type="text" className="h-full" onChange={handleChange} name="podpis_dyrektora_hotelu" rows={2} />
                     </div>
                 </td>
             </tr>

@@ -97,7 +97,6 @@ func (app *application) getUserIdFromSession(r *http.Request) (int, error) {
 	if !ok || userId == 0 {
 		return 0, errors.New("user not authenticated")
 	}
-	fmt.Print("userid ", userId)
 	return userId, nil
 }
 
@@ -168,6 +167,62 @@ func (app *application) handleKartaKontrolnaSprzataniaPokoju(w http.ResponseWrit
 	}
 
 	id, err := app.answers.SaveKartaKontrolnaSprzataniaPokoju(userId, data.NrPokoju, data.DataKontroli, data.RodzajSprzatania, data.DodatkoweZlecenie, data.PoprawnoscWykonania, data.PodpisOsobyRealizujacejKontrole)
+
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprint("succesfully insterted row with id ", id)})
+}
+
+func (app *application) handleDrukSerwowaniaSniadanDoPokoju(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+
+		return
+	}
+
+	userId, err := app.getUserIdFromSession(r)
+	if err != nil {
+		app.serverError(w, err)
+	}
+	var data models.DrukSerwowaniaSniadanDoPokoju
+	err = json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		app.notFound(w)
+		app.errorLog.Println(err)
+	}
+
+	id, err := app.answers.SaveDrukSerwowaniaSniadanDoPokoju(
+		userId,
+		data.Termin,
+		data.LiczbaOsob,
+		data.NrPokoju,
+		data.PrzedzialCzasowyOd,
+		data.PrzedzialCzasowyDo,
+		data.DostarczoneProdukty,
+		data.KawaCzarnaIlosc,
+		data.KawaZMlekiemIlosc,
+		data.HerbataCzarnaIlosc,
+		data.HerbataZielonaIlosc,
+		data.SokPomaranczowyIlosc,
+		data.SokJablkowyIlosc,
+		data.PieczywoMieszaneIlosc,
+		data.TostyIlosc,
+		data.RogalikiIlosc,
+		data.ParowkiIlosc,
+		data.JajecznicaIlosc,
+		data.JajkaSadzoneIlosc,
+		data.DzemTruskawkowyIlosc,
+		data.DzemWisniowyIlosc,
+		data.MiodIlosc,
+		data.OwoceSwiezeIlosc,
+		data.OwoceMrozoneIlosc,
+		data.JogurtNaturalnyIlosc,
+		data.PodpisOsoby,
+	)
 
 	if err != nil {
 		app.serverError(w, err)

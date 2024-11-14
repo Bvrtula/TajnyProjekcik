@@ -37,6 +37,50 @@ type KartaKontrolnaSprzątaniaPokoju struct {
 	PodpisOsobyRealizujacejKontrole string `json:"podpis_osoby_realizujacej_kontrole"`
 }
 
+type DrukSerwowaniaSniadanDoPokoju struct {
+	Termin                string `json:"termin"`
+	LiczbaOsob            string `json:"liczba_osob"`
+	NrPokoju              string `json:"nr_pokoju"`
+	PrzedzialCzasowyOd    string `json:"przedzial_czasowy_od"`
+	PrzedzialCzasowyDo    string `json:"przedzial_czasowy_do"`
+	DostarczoneProdukty   string `json:"dostarczone_produkty"`
+	KawaCzarnaIlosc       string `json:"kawa_czarna_ilosc"`
+	KawaZMlekiemIlosc     string `json:"kawa_z_mlekiem_ilosc"`
+	HerbataCzarnaIlosc    string `json:"herbata_czarna_ilosc"`
+	HerbataZielonaIlosc   string `json:"herbata_zielona_ilosc"`
+	SokPomaranczowyIlosc  string `json:"sok_pomaranczowy_ilosc"`
+	SokJablkowyIlosc      string `json:"sok_jablkowy_ilosc"`
+	PieczywoMieszaneIlosc string `json:"pieczywo_mieszane_ilosc"`
+	TostyIlosc            string `json:"tosty_ilosc"`
+	RogalikiIlosc         string `json:"rogaliki_ilosc"`
+	ParowkiIlosc          string `json:"parowki_ilosc"`
+	JajecznicaIlosc       string `json:"jajecznica_ilosc"`
+	JajkaSadzoneIlosc     string `json:"jajka_sadzone_ilosc"`
+	DzemTruskawkowyIlosc  string `json:"dzem_truskawkowy_ilosc"`
+	DzemWisniowyIlosc     string `json:"dzem_wisniowy_ilosc"`
+	MiodIlosc             string `json:"miod_ilosc"`
+	OwoceSwiezeIlosc      string `json:"owoce_swieze_ilosc"`
+	OwoceMrozoneIlosc     string `json:"owoce_mrozone_ilosc"`
+	JogurtNaturalnyIlosc  string `json:"jogurt_naturalny_ilosc"`
+	PodpisOsoby           string `json:"podpis_osoby"`
+}
+
+type WstawkaDlaGościSpecjalnych struct {
+	TerminPobytuOd           string `json:"termin_pobytu_od"`
+	TerminPobytuDo           string `json:"termin_pobytu_do"`
+	LiczbaOsob               string `json:"liczba_osob"`
+	NrPokoju                 string `json:"nr_pokoju"`
+	TerminWykonaniaUslugi    string `json:"termin_wykonania_uslugi"`
+	ZyczeniaDodatkowe        string `json:"zyczenia_dodatkowe"`
+	KoszPrezentowy           string `json:"kosz_prezentowy"`
+	CenaZaWybranaWstawke     string `json:"cena_za_wybrana_wstawke"`
+	DodatkoweOplaty          string `json:"dodatkowe_oplaty"`
+	RazemDoZaplaty           string `json:"razem_do_zaplaty"`
+	DataZleceniaUslugi       string `json:"data_zlecenia_uslugi"`
+	PodpisPracownikaRecepcji string `json:"podpis_pracownika_recepcji"`
+	PodpisDyrektoraHotelu    string `json:"podpis_dyrektora_hotelu"`
+}
+
 type Exam struct {
 	ID    int    `json:"id"`
 	Nazwa string `json:"nazwa"`
@@ -64,6 +108,29 @@ func (a *AnswerModel) SaveKartaKontrolnaSprzataniaPokoju(userId int, nr_pokoju, 
 	res, err := a.DB.Exec(`INSERT INTO 
 	karta_kontrolna_sprzatania_pokoju (numer_pokoju, data_kontroli_pokoju, rodzaj_sprzatania_wykonanego_przez_pokojowa, dodatkowe_zlecenie_dla_pokojowej, poprawnosc_wykonania, podpis_osoby_realizujacej_kontrole, userid) 
 	VALUES (?, ?, ?, ?, ?, ?, ?)`, nr_pokoju, data_kontroli, rodzaj_sprzatania, dodatkowe_zlecenie, poprawnosc_wykonania, podpis_osoby_realizujacej_kontrole, userId)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func (a *AnswerModel) SaveDrukSerwowaniaSniadanDoPokoju(userId int, termin, liczba_osob, nr_pokoju, przedzial_czasowy_od, przedzial_czasowy_do, dostarczone_produkty, kawa_czarna_ilosc, kawa_z_mlekiem_ilosc, herbata_czarna_ilosc, herbata_zielona_ilosc, sok_pomaranczowy_ilosc, sok_jablkowy_ilosc, pieczywo_mieszane_ilosc, tosty_ilosc, rogaliki_ilosc, parowki_ilosc, jajecznica_ilosc, jajka_sadzone_ilosc, dzem_truskawkowy_ilosc, dzem_wisniowy_ilosc, miod_ilosc, owoce_swieze_ilosc, owoce_mrozone_ilosc, jogurt_naturalny_ilosc, podpis_osoby string) (int, error) {
+	res, err := a.DB.Exec(`INSERT INTO 
+	druk_serwowania_sniadan_do_pokoju (
+		termin_wykonania_uslugi, liczba_osob, numer_pokoju, przedzial_czasowy_od, przedzial_czasowy_do, dostarczone_produkty, kawa_czarna,
+		kawa_z_mlekiem, herbata_czarna, herbata_zielona, sok_pomaranczowy, sok_jablkowy, pieczywo_mieszane, tosty, rogaliki, parowki,
+		jajecznica, jajka_sadzone, dzem_truskawkowy, dzem_wisniowy, miod, owoce_swieze, owoce_mrozone, jogurt_naturalny, podpis_osoby_realizujacej_kontrole, userid
+	) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);`,
+		termin, liczba_osob, nr_pokoju, przedzial_czasowy_od, przedzial_czasowy_do, dostarczone_produkty, kawa_czarna_ilosc,
+		kawa_z_mlekiem_ilosc, herbata_czarna_ilosc, herbata_zielona_ilosc, sok_pomaranczowy_ilosc, sok_jablkowy_ilosc, pieczywo_mieszane_ilosc, tosty_ilosc, rogaliki_ilosc, parowki_ilosc,
+		jajecznica_ilosc, jajka_sadzone_ilosc, dzem_truskawkowy_ilosc, dzem_wisniowy_ilosc, miod_ilosc, owoce_swieze_ilosc, owoce_mrozone_ilosc, jogurt_naturalny_ilosc, podpis_osoby, userId)
+
 	if err != nil {
 		return 0, err
 	}
