@@ -5,8 +5,10 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/Bvrtula/TajnyProjekcik/models"
+	"github.com/gorilla/mux"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -231,6 +233,43 @@ func (app *application) handleDrukSerwowaniaSniadanDoPokoju(w http.ResponseWrite
 	json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprint("succesfully insterted row with id ", id)})
 }
 
+func (app *application) handleWstawkaDlaGosciSpecjalnych(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	userId, err := app.getUserIdFromSession(r)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	var data models.WstawkaDlaGosciSpecjalnych
+	err = json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		app.notFound(w)
+		app.errorLog.Println(err)
+		return
+	}
+
+	id, err := app.answers.SaveWstawkaDlaGosciSpecjalnych(
+		userId,
+		data.TerminPobytuOd, data.TerminPobytuDo, data.LiczbaOsob, data.NrPokoju,
+		data.TerminWykonaniaUslugi, data.ZyczeniaDodatkowe, data.KoszPrezentowy,
+		data.CenaZaWybranaWstawke, data.DodatkoweOplaty, data.RazemDoZaplaty,
+		data.DataZleceniaUslugi, data.PodpisPracownikaRecepcji, data.PodpisDyrektoraHotelu,
+	)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("Successfully inserted row with ID %d", id)})
+}
+
 func (app *application) serveExams(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -240,4 +279,18 @@ func (app *application) serveExams(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(exams)
+}
+
+func (app *application) serveResults(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	vars := mux.Vars(r)
+	idParam := vars["id"]
+	id, err := strconv.Atoi(idParam)
+
+	results, err := app.answers.ServeTestResults(id)
+	if err != nil {
+		app.serverError(w, err)
+	}
+
+	json.NewEncoder(w).Encode(results)
 }

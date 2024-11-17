@@ -15,6 +15,7 @@ import { useState } from 'react'
 import { Label } from "@/components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 import { Textarea } from '@/components/ui/textarea'
+import { useToast } from '@/hooks/use-toast';
 
 
 
@@ -49,7 +50,11 @@ const dostarczoneProduktyIUsługi = [
 const WstawkaDlaGosciSpecjalnych = () => {
     const thClass = "p-2 border-solid border-2 border-black w-3/12"
     const tdClass = " p-2 border-solid border-2 border-black text-left"
-    const [date, setDate] = useState()
+    const [terminPobytuOd, setTerminPobytuOd] = useState()
+    const [terminPobytuDo, setTerminPobytuDo] = useState()
+    const [terminWykonaniaUslugi, setTerminWykonaniaUslugi] = useState()
+    const [dataZleceniaUslugi, setDataZleceniaUslugi] = useState()
+    
     const [data, setData] = useState({
         termin_pobytu_od: "",
         termin_pobytu_do: "",
@@ -63,21 +68,41 @@ const WstawkaDlaGosciSpecjalnych = () => {
         razem_do_zaplaty: "",
         data_zlecenia_uslugi: "",
         podpis_pracownika_recepcji: "",
-        podpis_dyrektora_hotelu: ""
+        podpis_dyrektora_hotelu: "",
     });
+    const [date, setDate] = useState(null);
+    const { toast } = useToast();
 
     const handleChange = (e) => {
-        const [name, value] = e.target
-        console.log(name, value)
-        setData((prev) => {
-            return {...prev, [name]:value}
-        })
-    }
+        const { name, value } = e.target;
+        setData((prev) => ({ ...prev, [name]: value }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
+        data["termin_pobytu_od"] = terminPobytuOd.toLocaleDateString('pl-PL', options)
+        data["termin_pobytu_do"] = terminPobytuDo.toLocaleDateString('pl-PL', options)
+        data["termin_wykonania_uslugi"] = terminWykonaniaUslugi.toLocaleDateString('pl-PL', options)
+        data["data_zlecenia_uslugi"] = dataZleceniaUslugi.toLocaleDateString('pl-PL', options)        
+        try {
+            const response = await fetch("http://localhost:4000/student/egzamin/wstawkaDlaGosciSpecjalnych", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(data),
+            });
+            const result = await response.json();
+            toast({ title: "Success", description: "Form submitted successfully!" });
+        } catch (error) {
+            toast({ title: "Error", description: `Failed to submit form: ${error.message}` });
+        }
+    };
 
   return (
     <>
     <div className=' my-[3%]'>
-    <form action="/submit_form" method="post">
+    <form onSubmit={handleSubmit} method="post">
     <table className='w-full border-collapse'>
             <tr>
                 <th className={`${thClass} text-center`} colSpan={6}>
@@ -92,13 +117,13 @@ const WstawkaDlaGosciSpecjalnych = () => {
                             <h2>Od:</h2>
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!date && "text-muted-foreground")}>
+                                    <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!terminPobytuOd && "text-muted-foreground")}>
                                     <CalendarIcon />
-                                    {date ? format(date, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
+                                    {terminPobytuOd ? format(terminPobytuOd, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0">
-                                    <Calendar mode="single" selected={date} onSelect={setDate}  locale={pl} initialFocus/>
+                                    <Calendar mode="single" selected={terminPobytuOd} onSelect={setTerminPobytuOd}  locale={pl} initialFocus/>
                                 </PopoverContent>
                             </Popover>
                         </div>
@@ -106,13 +131,13 @@ const WstawkaDlaGosciSpecjalnych = () => {
                             <h2>Do:</h2>
                             <Popover>
                                 <PopoverTrigger asChild>
-                                    <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!date && "text-muted-foreground")}>
+                                    <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!terminPobytuDo && "text-muted-foreground")}>
                                     <CalendarIcon />
-                                    {date ? format(date, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
+                                    {terminPobytuDo ? format(terminPobytuDo, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
                                     </Button>
                                 </PopoverTrigger>
                                 <PopoverContent className="w-auto p-0">
-                                    <Calendar mode="single" selected={date} onSelect={setDate}  locale={pl} initialFocus/>
+                                    <Calendar mode="single" selected={terminPobytuDo} onSelect={setTerminPobytuDo}  locale={pl} initialFocus/>
                                 </PopoverContent>
                             </Popover>
                         </div>
@@ -136,13 +161,13 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 <td className={tdClass} colSpan={4}>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!date && "text-muted-foreground")}>
+                                <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!terminWykonaniaUslugi && "text-muted-foreground")}>
                                 <CalendarIcon />
-                                {date ? format(date, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
+                                {terminWykonaniaUslugi ? format(terminWykonaniaUslugi, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
-                                <Calendar mode="single" selected={date} onSelect={setDate}  locale={pl} initialFocus/>
+                                <Calendar mode="single" selected={terminWykonaniaUslugi} onSelect={setTerminWykonaniaUslugi}  locale={pl} initialFocus/>
                             </PopoverContent>
                         </Popover>
                 </td>
@@ -205,13 +230,13 @@ const WstawkaDlaGosciSpecjalnych = () => {
                     <h2>Data zlecenia usługi:</h2>
                         <Popover>
                             <PopoverTrigger asChild>
-                                <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!date && "text-muted-foreground")}>
+                                <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!dataZleceniaUslugi && "text-muted-foreground")}>
                                 <CalendarIcon />
-                                {date ? format(date, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
+                                {dataZleceniaUslugi ? format(dataZleceniaUslugi, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
                                 </Button>
                             </PopoverTrigger>
                             <PopoverContent className="w-auto p-0">
-                                <Calendar mode="single" selected={date} onSelect={setDate}  locale={pl} initialFocus/>
+                                <Calendar mode="single" selected={dataZleceniaUslugi} onSelect={setDataZleceniaUslugi}  locale={pl} initialFocus/>
                             </PopoverContent>
                         </Popover>
                 </td>
@@ -229,6 +254,7 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 </td>
             </tr>
         </table>
+        <Button type="submit">Submit</Button>
     </form>
     </div>
     </>

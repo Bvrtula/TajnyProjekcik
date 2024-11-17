@@ -11,42 +11,25 @@ import {
 import { da } from "date-fns/locale"
 import { useNavigate } from "react-router-dom"
 import { Button } from './ui/button'
-
-const data = [
-    {
-      imie: "jacek",
-      nazwisko: "kowalczyk",
-      klasa: "3TH",
-      test: "Egzamin zawodowy 2023 - praktyczny",
-    },
-    {
-      imie: "jacek",
-      nazwisko: "kowalczyk",
-      klasa: "3TH",
-      test: "Egzamin zawodowy 2023 - praktyczny",
-    },
-    {
-      imie: "jacek",
-      nazwisko: "kowalczyk",
-      klasa: "3TH",
-      test: "Egzamin zawodowy 2023 - praktyczny",
-    },
-    {
-      imie: "jacek",
-      nazwisko: "kowalczyk",
-      klasa: "3TH",
-      test: "Egzamin zawodowy 2023 - praktyczny",
-    },
-    {
-      imie: "jacek",
-      nazwisko: "kowalczyk",
-      klasa: "3TH",
-      test: "Egzamin zawodowy 2023 - praktyczny",
-    },
-  ]
+import { useState, useEffect } from "react"
   
 const Dashboard = () => {
-  const navigate = useNavigate()
+    const navigate = useNavigate()
+    const [results, setResults] = useState([]);
+
+    useEffect(() => {
+        fetch("http://localhost:4000/teacher/odpowiedzi", {
+          method: "GET",
+          headers: {
+          "Content-Type": "Application/JSON",
+          }})
+          .then((respose) => respose.json())
+          .then((data) =>  setResults(data))
+          .then(() => console.log(exams))
+          .catch((error) => {
+            console.log(error)
+          })}, []);
+
     return (
       <div className='w-[600px] mx-auto'>
       <div className="flex justify-between items-center">
@@ -59,15 +42,13 @@ const Dashboard = () => {
           <TableRow>
             <TableHead className="w-[100px]">Imię</TableHead>
             <TableHead>Nazwisko</TableHead>
-            <TableHead>Test</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {data.map((data) => (
-            <TableRow key={data.data} className="hover:cursor-pointer hover:shadow-xl" onClick={() => navigate(``)}>
-              <TableCell>{data.imie}</TableCell>
-              <TableCell>{data.nazwisko}</TableCell>
-              <TableCell><a className="hover:text-custom-blue cursor-pointer">{data.test}</a></TableCell>
+          {results.map((data) => (
+            <TableRow key={data.id} className="hover:cursor-pointer hover:shadow-xl" onClick={() => navigate(`/teacher/test/answer/${data.id}`)}>
+              <TableCell>{data.firstname}</TableCell>
+              <TableCell>{data.lastname}</TableCell>
             </TableRow>
           ))}
         </TableBody>

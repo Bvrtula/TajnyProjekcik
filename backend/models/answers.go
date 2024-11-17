@@ -65,7 +65,7 @@ type DrukSerwowaniaSniadanDoPokoju struct {
 	PodpisOsoby           string `json:"podpis_osoby"`
 }
 
-type WstawkaDlaGościSpecjalnych struct {
+type WstawkaDlaGosciSpecjalnych struct {
 	TerminPobytuOd           string `json:"termin_pobytu_od"`
 	TerminPobytuDo           string `json:"termin_pobytu_do"`
 	LiczbaOsob               string `json:"liczba_osob"`
@@ -79,6 +79,12 @@ type WstawkaDlaGościSpecjalnych struct {
 	DataZleceniaUslugi       string `json:"data_zlecenia_uslugi"`
 	PodpisPracownikaRecepcji string `json:"podpis_pracownika_recepcji"`
 	PodpisDyrektoraHotelu    string `json:"podpis_dyrektora_hotelu"`
+}
+
+type TestResults struct {
+	Id        int    `json:"id"`
+	Firstname string `json:"firstname"`
+	Lastname  string `json:"lastname"`
 }
 
 type Exam struct {
@@ -165,4 +171,59 @@ func (a *AnswerModel) GetExams() ([]*Exam, error) {
 	}
 
 	return egzams, nil
+}
+
+func (a *AnswerModel) SaveWstawkaDlaGosciSpecjalnych(
+	userId int,
+	termin_pobytu_od, termin_pobytu_do, liczba_osob, nr_pokoju,
+	termin_wykonania_uslugi, zyczenia_dodatkowe, kosz_prezentowy,
+	cena_za_wybrana_wstawke, dodatkowe_oplaty, razem_do_zaplaty,
+	data_zlecenia_uslugi, podpis_pracownika_recepcji, podpis_dyrektora_hotelu string,
+) (int, error) {
+	res, err := a.DB.Exec(`INSERT INTO 
+        wstawka_dla_gosci_specjalnych 
+        (termin_pobytu_od, termin_pobytu_do, liczba_osob, nr_pokoju, termin_wykonania_uslugi, zyczenia_dodatkowe, kosz_prezentowy, cena_za_wybrana_wstawke, dodatkowe_oplaty, razem_do_zaplaty, data_zlecenia_uslugi, podpis_pracownika_recepcji, podpis_dyrektora_hotelu, userid) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		termin_pobytu_od, termin_pobytu_do, liczba_osob, nr_pokoju, termin_wykonania_uslugi,
+		zyczenia_dodatkowe, kosz_prezentowy, cena_za_wybrana_wstawke, dodatkowe_oplaty,
+		razem_do_zaplaty, data_zlecenia_uslugi, podpis_pracownika_recepcji, podpis_dyrektora_hotelu, userId)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func (a *AnswerModel) ServeTestResults(testID int) ([]*TestResults, error) {
+	query := `
+    SELECT e.id, u.firstname, u.lastname
+	FROM egzamin_testowy_odpowiedzi e
+	JOIN users u ON e.userid = u.id;`
+
+	rows, err := a.DB.Query(query, testID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	results := []*TestResults{}
+	for rows.Next() {
+		r := &TestResults{}
+		err := rows.Scan(&r.Id, &r.Firstname, &r.Lastname)
+		if err != nil {
+			return nil, err
+		}
+		results = append(results, r)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+
+	return results, nil
 }

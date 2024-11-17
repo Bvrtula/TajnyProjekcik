@@ -11,14 +11,6 @@ import {
 import { useNavigate } from 'react-router-dom'
 import { useState, useEffect, React } from 'react'
 
-const data = [
-    {
-    id: 1,
-    testname: "egzamin1",
-    klasa: "4TH",
-    date: "17-02-2024"
-    }, 
-]
 
 
 
@@ -28,13 +20,6 @@ export const Student = () => {
     const navigate = useNavigate()
 
     useEffect(() => {
-
-        // fetch('http://localhost:4000/student/egzaminy')
-        //     .then((response) => response.json())
-        //     .then((data) => setExams(data))
-        //     .then(console.log(data))
-        //     .catch((error) => console.error('Error fetching data:', error));
-        //   },
         fetch("http://localhost:4000/student/egzaminy", {
           method: "GET",
           headers: {
@@ -42,7 +27,7 @@ export const Student = () => {
           }})
           .then((respose) => respose.json())
           .then((data) =>  setExams(data))
-          .then(() => console.log(data))
+          .then(() => console.log(exams))
           .catch((error) => {
             console.log(error)
           })}, []);
