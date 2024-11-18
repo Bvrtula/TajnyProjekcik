@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
 
-const DrukSerwowaniaSniadanDoPokoju = () => {
+const DrukSerwowaniaSniadanDoPokoju = ({ isSubmitted, onFormSubmit }) => {
     const thClass = "p-2 border-solid border-2 border-black text-center"
     const tdClass = "p-2 border-solid border-2 border-black text-left w-3/12"
     const [date, setDate] = useState()
@@ -28,8 +28,8 @@ const DrukSerwowaniaSniadanDoPokoju = () => {
         termin: "",
         liczba_osob: "",
         nr_pokoju: "",
-        przedział_czasowy_od: "",
-        przedział_czasowy_do: "",
+        przedzial_czasowy_od: "",
+        przedzial_czasowy_do: "",
         dostarczone_produkty: "",
         kawa_czarna_ilosc: "",
         kawa_z_mlekiem_ilosc: "",
@@ -64,8 +64,8 @@ const DrukSerwowaniaSniadanDoPokoju = () => {
       e.preventDefault()
       const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
       data["termin"] = date.toLocaleDateString('pl-PL', options)
-      data["przedział_czasowy_od"] = startHour+":"+startMinute
-      data["przedział_czasowy_do"] = endHour+":"+endMinute
+      data["przedzial_czasowy_od"] = startHour+":"+startMinute
+      data["przedzial_czasowy_do"] = endHour+":"+endMinute
       console.log(data)
 
       fetch("http://localhost:4000/student/egzamin/drukSerwowaniaSniadanDoPokoju", {
@@ -81,7 +81,8 @@ const DrukSerwowaniaSniadanDoPokoju = () => {
         .then(() => toast({
           title: "Sukces",
           description: `Pomyślnie przesłano odpowiedzi`
-        }))
+          }))
+        .then(() => onFormSubmit())  
         .catch((error) => {
           console.log(error)
           toast({
@@ -215,7 +216,9 @@ const DrukSerwowaniaSniadanDoPokoju = () => {
             <td className={tdClass + "h-full"} colSpan={4}><Input type="text" onChange={handleChange} name="podpis_osoby" required/></td>
         </tr>
     </table>
-    <Button type="submit">Submit</Button>
+    <Button type="submit" disabled={isSubmitted}>
+      {isSubmitted ? 'Przesłano odpowiedzi' : 'Prześlij odpowiedzi'}
+    </Button>
     </form>
     </div>
     </>

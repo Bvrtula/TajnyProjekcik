@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import KartaKontrolnaSprzataniaPokoju from '@/components/KartaKontrolnaSprzataniaPokoju'
 import {
     Tabs,
@@ -15,11 +15,34 @@ import { useNavigate } from 'react-router-dom'
 
 const Test = () => {
     const navigate = useNavigate()
+    const [submissionStates, setSubmissionStates] = useState({
+        kwitParkingowy: false,
+        wstawkaDlaGosciSpecjalnych: false,
+        kartaKontrolnaSprzataniaPokoju: false,
+        drukSerwowaniSniadanDoPokoju: false,
+        drukUslugPralniczych: false,
+    });
+
+    const handleSolved = (e) => {
+        e.preventDefault();
+        fetch('http://localhost:4000/student/egzamin/zakoncz', {
+            method: 'POST',
+            credentials: 'include',
+        })
+            .then(() => navigate('/student'))
+            .catch((error) => {
+                console.log(error);
+            });
+    };
+
+    const markFormAsSubmitted = (formName) => {
+        setSubmissionStates((prev) => ({ ...prev, [formName]: true }));
+    };
   return (
     <>
         <div>
             POLECENIE EGZAMINU...
-            <Button onClick={() => navigate("/student")}>Powrót</Button>
+            <Button onClick={handleSolved}>Zakończ</Button>
         </div>
         <div className='w-full flex justify-center'>
         <Tabs defaultValue="account" className="w-[1400px]">
@@ -31,19 +54,19 @@ const Test = () => {
             <TabsTrigger value="wstawka_dla_gosci_specjalnych">wstawka_dla_gosci_specjalnych</TabsTrigger>
         </TabsList>
         <TabsContent value="karta_kontrolna_sprzatania_pokoju">
-            <KartaKontrolnaSprzataniaPokoju />
+            <KartaKontrolnaSprzataniaPokoju isSubmitted={submissionStates.kartaKontrolnaSprzataniaPokoju} onFormSubmit={() => markFormAsSubmitted('kartaKontrolnaSprzataniaPokoju')}/>
         </TabsContent>
         <TabsContent value="druk_serwowania_sniadan_do_pokoju">
-            <DrukSerwowaniaSniadanDoPokoju />
+            <DrukSerwowaniaSniadanDoPokoju isSubmitted={submissionStates.drukSerwowaniSniadanDoPokoju} onFormSubmit={() => markFormAsSubmitted('drukSerwowaniSniadanDoPokoju')}/>
         </TabsContent>
         <TabsContent value="kwit_parkingowy">
-            <KwitParkingowy />
+            <KwitParkingowy isSubmitted={submissionStates.kwitParkingowy} onFormSubmit={() => markFormAsSubmitted('kwitParkingowy')}/>
         </TabsContent>
         <TabsContent value="druk_uslug_pralniczych">
-            <DrukUslugPralniczych />
+            <DrukUslugPralniczych isSubmitted={submissionStates.drukUslugPralniczych} onFormSubmit={() => markFormAsSubmitted('drukUslugPralniczych')}/>
         </TabsContent>
         <TabsContent value="wstawka_dla_gosci_specjalnych">
-            <WstawkaDlaGosciSpecjalnych />
+            <WstawkaDlaGosciSpecjalnych isSubmitted={submissionStates.wstawkaDlaGosciSpecjalnych} onFormSubmit={() => markFormAsSubmitted('wstawkaDlaGosciSpecjalnych')}/>
         </TabsContent>
         </Tabs>
         </div>

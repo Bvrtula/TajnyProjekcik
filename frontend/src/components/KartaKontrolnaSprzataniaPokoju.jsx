@@ -16,7 +16,7 @@ import { format } from 'date-fns'
 import { pl } from 'date-fns/locale' 
 import { useToast } from '@/hooks/use-toast'
 
-const KartaKontrolnaSprzataniaPokoju = () => {
+const KartaKontrolnaSprzataniaPokoju = ({ isSubmitted, onFormSubmit }) => {
     const thClass = "p-2 border-solid border-2 border-black text-left w-3/12"
     const tdClass = " p-2 border-solid border-2 border-black text-left"
     const [date, setDate] = useState()
@@ -59,6 +59,7 @@ const KartaKontrolnaSprzataniaPokoju = () => {
             title: "Sukces",
             description: `Pomyślnie przesłano odpowiedzi`
           }))
+          .then(()=> onFormSubmit())
           .catch((error) => {
             console.log(error)
             toast({
@@ -139,7 +140,9 @@ const KartaKontrolnaSprzataniaPokoju = () => {
             <td className={tdClass + "h-full"}><Input type="text" required onChange={handleChange} name="podpis_osoby_realizujacej_kontrole" /></td>
         </tr>
     </table>
-    <Button type="submit">Submit</Button>
+    <Button type="submit" disabled={isSubmitted}>
+      {isSubmitted ? 'Przesłano odpowiedzi' : 'Prześlij odpowiedzi'}
+    </Button>
     </form>
     </div>
     </>

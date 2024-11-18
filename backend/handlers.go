@@ -270,6 +270,37 @@ func (app *application) handleWstawkaDlaGosciSpecjalnych(w http.ResponseWriter, 
 	json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("Successfully inserted row with ID %d", id)})
 }
 
+func (app *application) handleDrukUslugPralniczych(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	userId, err := app.getUserIdFromSession(r)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	var data models.DrukUslugPralniczych
+	err = json.NewDecoder(r.Body).Decode(&data)
+	if err != nil {
+		app.notFound(w)
+		app.errorLog.Println(err)
+		return
+	}
+
+	id, err := app.answers.SaveDrukUslugPralniczych(userId, data.NazwiskoIImieGoscia, data.NrPokoju, data.DataRealizacjiUslugi, data.IloscKoszulaDamskaMeska, data.IloscSpodnicaLubSpodnieDamski, data.IloscGarniturDamski, data.IloscGarniturMeski, data.IloscUslugaEkspresowa, data.DoZaplaty, data.PodpisPracownikaRealizujacegoZlecenie)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(map[string]string{"message": fmt.Sprintf("Successfully inserted row with ID %d", id)})
+}
+
 func (app *application) serveExams(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 
@@ -293,4 +324,25 @@ func (app *application) serveResults(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(results)
+}
+
+func (app *application) saveStudentSolvedTest(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	if r.Method != http.MethodPost {
+		w.Header().Set("Allow", http.MethodPost)
+		app.clientError(w, http.StatusMethodNotAllowed)
+		return
+	}
+
+	userId, err := app.getUserIdFromSession(r)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	_, err = app.answers.SaveUserSolvedTest(userId)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
 }

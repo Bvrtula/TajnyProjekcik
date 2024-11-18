@@ -47,7 +47,7 @@ const dostarczoneProduktyIUsługi = [
     },
 ]
 
-const WstawkaDlaGosciSpecjalnych = () => {
+const WstawkaDlaGosciSpecjalnych = ({ isSubmitted, onFormSubmit }) => {
     const thClass = "p-2 border-solid border-2 border-black w-3/12"
     const tdClass = " p-2 border-solid border-2 border-black text-left"
     const [terminPobytuOd, setTerminPobytuOd] = useState()
@@ -70,7 +70,6 @@ const WstawkaDlaGosciSpecjalnych = () => {
         podpis_pracownika_recepcji: "",
         podpis_dyrektora_hotelu: "",
     });
-    const [date, setDate] = useState(null);
     const { toast } = useToast();
 
     const handleChange = (e) => {
@@ -93,9 +92,16 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 body: JSON.stringify(data),
             });
             const result = await response.json();
-            toast({ title: "Success", description: "Form submitted successfully!" });
+            toast({
+                title: "Sukces",
+                description: `Pomyślnie przesłano odpowiedzi`
+              });
+            onFormSubmit();
         } catch (error) {
-            toast({ title: "Error", description: `Failed to submit form: ${error.message}` });
+            toast({
+                title: "Błąd",
+                description: `Nie udało się utworzyć użytkownika: ${error}`,
+            });
         }
     };
 
@@ -254,7 +260,9 @@ const WstawkaDlaGosciSpecjalnych = () => {
                 </td>
             </tr>
         </table>
-        <Button type="submit">Submit</Button>
+        <Button type="submit" disabled={isSubmitted}>
+            {isSubmitted ? 'Przesłano odpowiedzi' : 'Prześlij odpowiedzi'}
+        </Button>
     </form>
     </div>
     </>

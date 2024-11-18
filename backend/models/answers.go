@@ -21,8 +21,8 @@ type Answer struct {
 type KwitParkingowy struct {
 	NrPokoju                             string `json:"nr_pokoju"`
 	ImieINazwiskoGoscia                  string `json:"imie_i_nazwisko_goscia"`
-	OkresKorzystaniaZUslugiParkingowejOd string `json:"okres_korzystania_do"`
-	OkresKorzystaniaZUslugiParkingowejDo string `json:"okres_korzystania_od"`
+	OkresKorzystaniaZUslugiParkingowejOd string `json:"okres_korzystania_od"`
+	OkresKorzystaniaZUslugiParkingowejDo string `json:"okres_korzystania_do"`
 	SamochodMarki                        string `json:"samochod_marki"`
 	NrRejestracyjny                      string `json:"nr_rejestracyjny"`
 	PodpisPracownikaParkingu             string `json:"podpis_pracownika"`
@@ -79,6 +79,20 @@ type WstawkaDlaGosciSpecjalnych struct {
 	DataZleceniaUslugi       string `json:"data_zlecenia_uslugi"`
 	PodpisPracownikaRecepcji string `json:"podpis_pracownika_recepcji"`
 	PodpisDyrektoraHotelu    string `json:"podpis_dyrektora_hotelu"`
+}
+
+type DrukUslugPralniczych struct {
+	NazwiskoIImieGoscia                   string `json:"nazwisko_i_imie_goscia"`
+	NrPokoju                              string `json:"nr_pokoju"`
+	DataRealizacjiUslugi                  string `json:"data_realizacji_uslugi"`
+	IloscKoszulaDamskaMeska               string `json:"ilosc_koszula_damska_meska"`
+	IloscSpodnicaLubSpodnieDamski         string `json:"ilosc_spódnica_lub_spodnie_damski"`
+	IloscGarniturDamski                   string `json:"ilosc_garnitur_damski"`
+	IloscGarniturMeski                    string `json:"ilosc_garnitur_meski"`
+	IloscUslugaEkspresowa                 string `json:"ilosc_usluga_ekspresowa"`
+	DoZaplaty                             string `json:"do_zaplaty"`
+	PodpisPracownikaRealizujacegoZlecenie string `json:"podpis_pracownika_realizujacego_zlecenie"`
+	UserID                                int    `json:"user_id"`
 }
 
 type TestResults struct {
@@ -178,8 +192,8 @@ func (a *AnswerModel) SaveWstawkaDlaGosciSpecjalnych(
 	termin_pobytu_od, termin_pobytu_do, liczba_osob, nr_pokoju,
 	termin_wykonania_uslugi, zyczenia_dodatkowe, kosz_prezentowy,
 	cena_za_wybrana_wstawke, dodatkowe_oplaty, razem_do_zaplaty,
-	data_zlecenia_uslugi, podpis_pracownika_recepcji, podpis_dyrektora_hotelu string,
-) (int, error) {
+	data_zlecenia_uslugi, podpis_pracownika_recepcji, podpis_dyrektora_hotelu string) (int, error) {
+
 	res, err := a.DB.Exec(`INSERT INTO 
         wstawka_dla_gosci_specjalnych 
         (termin_pobytu_od, termin_pobytu_do, liczba_osob, nr_pokoju, termin_wykonania_uslugi, zyczenia_dodatkowe, kosz_prezentowy, cena_za_wybrana_wstawke, dodatkowe_oplaty, razem_do_zaplaty, data_zlecenia_uslugi, podpis_pracownika_recepcji, podpis_dyrektora_hotelu, userid) 
@@ -187,6 +201,37 @@ func (a *AnswerModel) SaveWstawkaDlaGosciSpecjalnych(
 		termin_pobytu_od, termin_pobytu_do, liczba_osob, nr_pokoju, termin_wykonania_uslugi,
 		zyczenia_dodatkowe, kosz_prezentowy, cena_za_wybrana_wstawke, dodatkowe_oplaty,
 		razem_do_zaplaty, data_zlecenia_uslugi, podpis_pracownika_recepcji, podpis_dyrektora_hotelu, userId)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
+}
+
+func (a *AnswerModel) SaveDrukUslugPralniczych(
+	userId int,
+	nazwisko_i_imie_goscia, nr_pokoju, data_realizacji_uslugi,
+	ilosc_koszula_damska_meska, ilosc_spódnica_lub_spodnie_damski,
+	ilosc_garnitur_damski, ilosc_garnitur_meski, ilosc_usluga_ekspresowa,
+	do_zaplaty, podpis_pracownika_realizujacego_zlecenie string,
+) (int, error) {
+
+	res, err := a.DB.Exec(`INSERT INTO 
+		druk_uslug_pralniczych 
+		(nazwisko_i_imie_goscia, nr_pokoju, data_realizacji_uslugi, 
+		 ilosc_koszula_damska_meska, ilosc_spódnica_lub_spodnie_damski, 
+		 ilosc_garnitur_damski, ilosc_garnitur_meski, ilosc_usluga_ekspresowa, 
+		 do_zaplaty, podpis_pracownika_realizujacego_zlecenie, userid) 
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+		nazwisko_i_imie_goscia, nr_pokoju, data_realizacji_uslugi,
+		ilosc_koszula_damska_meska, ilosc_spódnica_lub_spodnie_damski,
+		ilosc_garnitur_damski, ilosc_garnitur_meski, ilosc_usluga_ekspresowa,
+		do_zaplaty, podpis_pracownika_realizujacego_zlecenie, userId)
 	if err != nil {
 		return 0, err
 	}
@@ -226,4 +271,18 @@ func (a *AnswerModel) ServeTestResults(testID int) ([]*TestResults, error) {
 	}
 
 	return results, nil
+}
+
+func (a *AnswerModel) SaveUserSolvedTest(userID int) (int, error) {
+	res, err := a.DB.Exec(`INSERT INTO egzamin_testowy_odpowiedzi(userid) VALUES (?)`, userID)
+	if err != nil {
+		return 0, err
+	}
+
+	id, err := res.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return int(id), nil
 }

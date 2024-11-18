@@ -26,6 +26,9 @@ const Register = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const userData = {
+    firstname: firstname,
+    lastname: lastname,
+    studentClass, studentClass,
     email: email,
     password: password,
     }
