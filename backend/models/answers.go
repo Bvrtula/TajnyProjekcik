@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 )
 
 type AnswerModel struct {
@@ -97,6 +98,7 @@ type DrukUslugPralniczych struct {
 
 type TestResults struct {
 	Id        int    `json:"id"`
+	UserId    int    `json:"userid"`
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
 }
@@ -246,7 +248,7 @@ func (a *AnswerModel) SaveDrukUslugPralniczych(
 
 func (a *AnswerModel) ServeTestResults(testID int) ([]*TestResults, error) {
 	query := `
-    SELECT e.id, u.firstname, u.lastname
+    SELECT e.id, u.id, u.firstname, u.lastname
 	FROM egzamin_testowy_odpowiedzi e
 	JOIN users u ON e.userid = u.id;`
 
@@ -259,7 +261,7 @@ func (a *AnswerModel) ServeTestResults(testID int) ([]*TestResults, error) {
 	results := []*TestResults{}
 	for rows.Next() {
 		r := &TestResults{}
-		err := rows.Scan(&r.Id, &r.Firstname, &r.Lastname)
+		err := rows.Scan(&r.Id, &r.UserId, &r.Firstname, &r.Lastname)
 		if err != nil {
 			return nil, err
 		}
@@ -285,4 +287,225 @@ func (a *AnswerModel) SaveUserSolvedTest(userID int) (int, error) {
 	}
 
 	return int(id), nil
+}
+
+func (a *AnswerModel) GetDrukSerwowaniaSniadanDoPokoju(userID int) ([]*DrukSerwowaniaSniadanDoPokoju, error) {
+	rows, err := a.DB.Query(`SELECT
+	termin_wykonania_uslugi,
+	liczba_osob,
+	numer_pokoju,
+	przedzial_czasowy_od,
+	przedzial_czasowy_do,
+	dostarczone_produkty,
+	kawa_czarna,
+	kawa_z_mlekiem,
+	herbata_czarna,
+	herbata_zielona,
+	sok_pomaranczowy,
+	sok_jablkowy,
+	pieczywo_mieszane,
+	tosty,
+	rogaliki,
+	parowki,
+	jajecznica,
+	jajka_sadzone,
+	dzem_truskawkowy,
+	dzem_wisniowy,
+	miod,
+	owoce_swieze,
+	owoce_mrozone,
+	jogurt_naturalny,
+	podpis_osoby_realizujacej_kontrole FROM druk_serwowania_sniadan_do_pokoju WHERE userid=?`, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	data := []*DrukSerwowaniaSniadanDoPokoju{}
+	for rows.Next() {
+		a := &DrukSerwowaniaSniadanDoPokoju{}
+		err := rows.Scan(&a.Termin, &a.LiczbaOsob, &a.NrPokoju, &a.PrzedzialCzasowyOd, &a.PrzedzialCzasowyDo, &a.DostarczoneProdukty, &a.KawaCzarnaIlosc, &a.KawaZMlekiemIlosc, &a.HerbataCzarnaIlosc, &a.HerbataZielonaIlosc, &a.SokPomaranczowyIlosc, &a.SokJablkowyIlosc, &a.PieczywoMieszaneIlosc, &a.TostyIlosc, &a.RogalikiIlosc, &a.ParowkiIlosc, &a.JajecznicaIlosc, &a.JajkaSadzoneIlosc, &a.DzemTruskawkowyIlosc, &a.DzemWisniowyIlosc, &a.MiodIlosc, &a.OwoceSwiezeIlosc, &a.OwoceMrozoneIlosc, &a.JogurtNaturalnyIlosc, &a.PodpisOsoby)
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, a)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	fmt.Println(data)
+	return data, nil
+}
+
+func (a *AnswerModel) GetDrukUslugPralniczych(userID int) ([]*DrukUslugPralniczych, error) {
+	rows, err := a.DB.Query(`SELECT
+	nazwisko_i_imie_goscia,
+	nr_pokoju,
+	data_realizacji_uslugi,
+	ilosc_koszula_damska_meska,
+	ilosc_spódnica_lub_spodnie_damski,
+	ilosc_garnitur_damski,
+	ilosc_garnitur_meski,
+	ilosc_usluga_ekspresowa,
+	do_zaplaty,
+	podpis_pracownika_realizujacego_zlecenie 
+	FROM druk_uslug_pralniczych WHERE userid=?`, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	data := []*DrukUslugPralniczych{}
+	for rows.Next() {
+		a := &DrukUslugPralniczych{}
+		err := rows.Scan(
+			&a.NazwiskoIImieGoscia,
+			&a.NrPokoju,
+			&a.DataRealizacjiUslugi,
+			&a.IloscKoszulaDamskaMeska,
+			&a.IloscSpodnicaLubSpodnieDamski,
+			&a.IloscGarniturDamski,
+			&a.IloscGarniturMeski,
+			&a.IloscUslugaEkspresowa,
+			&a.DoZaplaty,
+			&a.PodpisPracownikaRealizujacegoZlecenie)
+
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, a)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	fmt.Println(data)
+	return data, nil
+}
+func (a *AnswerModel) GetKartaKontrolnaSprzataniaPokoju(userID int) ([]*KartaKontrolnaSprzątaniaPokoju, error) {
+	rows, err := a.DB.Query(`SELECT
+	numer_pokoju,
+	data_kontroli_pokoju,
+	rodzaj_sprzatania_wykonanego_przez_pokojowa,
+	dodatkowe_zlecenie_dla_pokojowej,
+	poprawnosc_wykonania,
+	podpis_osoby_realizujacej_kontrole 
+	FROM karta_kontrolna_sprzatania_pokoju WHERE userid=?`, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	data := []*KartaKontrolnaSprzątaniaPokoju{}
+	for rows.Next() {
+		a := &KartaKontrolnaSprzątaniaPokoju{}
+		err := rows.Scan(
+			&a.NrPokoju,
+			&a.DataKontroli,
+			&a.RodzajSprzatania,
+			&a.DodatkoweZlecenie,
+			&a.PoprawnoscWykonania,
+			&a.PodpisOsobyRealizujacejKontrole)
+
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, a)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	fmt.Println(data)
+	return data, nil
+}
+func (a *AnswerModel) GetKwitParkingowy(userID int) ([]*KwitParkingowy, error) {
+	rows, err := a.DB.Query(`SELECT
+	imie_i_nazwisko_goscia,
+	okres_korzystania_z_uslugi_parkingowej_od,
+	okres_korzystania_z_uslugi_parkingowej_do,
+	nr_pokoju,
+	samochod_marki,
+	nr_rejestracyjny,
+	podpis_pracownika_parkingu
+	FROM kwit_parkingowy WHERE userid=?`, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	data := []*KwitParkingowy{}
+	for rows.Next() {
+		a := &KwitParkingowy{}
+		err := rows.Scan(
+			&a.ImieINazwiskoGoscia,
+			&a.OkresKorzystaniaZUslugiParkingowejOd,
+			&a.OkresKorzystaniaZUslugiParkingowejDo,
+			&a.NrPokoju,
+			&a.SamochodMarki,
+			&a.NrRejestracyjny,
+			&a.PodpisPracownikaParkingu)
+
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, a)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	return data, nil
+}
+func (a *AnswerModel) GetWstawkaDlaGosciSpecjalnych(userID int) ([]*WstawkaDlaGosciSpecjalnych, error) {
+	rows, err := a.DB.Query(`SELECT
+	termin_pobytu_od,
+	termin_pobytu_do,
+	liczba_osob,
+	nr_pokoju,
+	termin_wykonania_uslugi,
+	zyczenia_dodatkowe,
+	kosz_prezentowy,
+	cena_za_wybrana_wstawke,
+	dodatkowe_oplaty,
+	razem_do_zaplaty,
+	data_zlecenia_uslugi,
+	podpis_pracownika_recepcji,
+	podpis_dyrektora_hotelu
+	FROM wstawka_dla_gosci_specjalnych WHERE userid=?`, userID)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+	data := []*WstawkaDlaGosciSpecjalnych{}
+	for rows.Next() {
+		a := &WstawkaDlaGosciSpecjalnych{}
+		err := rows.Scan(
+			&a.TerminPobytuOd,
+			&a.TerminPobytuDo,
+			&a.LiczbaOsob,
+			&a.NrPokoju,
+			&a.TerminWykonaniaUslugi,
+			&a.ZyczeniaDodatkowe,
+			&a.KoszPrezentowy,
+			&a.CenaZaWybranaWstawke,
+			&a.DodatkoweOplaty,
+			&a.RazemDoZaplaty,
+			&a.DataZleceniaUslugi,
+			&a.PodpisPracownikaRecepcji,
+			&a.PodpisDyrektoraHotelu)
+
+		if err != nil {
+			return nil, err
+		}
+		data = append(data, a)
+	}
+
+	if err = rows.Err(); err != nil {
+		return nil, err
+	}
+	fmt.Println(data)
+	return data, nil
 }

@@ -66,6 +66,11 @@ func main() {
 	r.HandleFunc("/student/egzamin/drukUslugPralniczych", app.handleDrukUslugPralniczych)
 	r.HandleFunc("/student/egzamin/zakoncz", app.saveStudentSolvedTest)
 	r.HandleFunc("/teacher/odpowiedzi", app.serveResults)
+	r.HandleFunc("/teacher/odpowiedzi/drukSerwowaniaSniadanDoPokoju/{userID}", app.serveDrukSerwowaniaSniadanDoPokojuAnswers)
+	r.HandleFunc("/teacher/odpowiedzi/drukUslugPralniczych/{userID}", app.serveDrukUslugPralniczych)
+	r.HandleFunc("/teacher/odpowiedzi/kartaKontrolnaSprzataniaPokoju/{userID}", app.serveKartaKontrolnaSprzataniaPokoju)
+	r.HandleFunc("/teacher/odpowiedzi/kwitParkingowy/{userID}", app.serveKwitParkingowy)
+	r.HandleFunc("/teacher/odpowiedzi/wstawkaDlaGosciSpecjalnych/{userID}", app.serveWstawkaDlaGosciSpecjalnych)
 	// r.HandleFunc("/user/handleAnswers", app.handleAnswers)
 	corsHandler := handlers.CORS(
 		handlers.AllowedOrigins([]string{"http://localhost:5173"}),

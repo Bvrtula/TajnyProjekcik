@@ -46,7 +46,7 @@ const Dashboard = () => {
         </TableHeader>
         <TableBody>
           {results.map((data) => (
-            <TableRow key={data.id} className="hover:cursor-pointer hover:shadow-xl" onClick={() => navigate(`/teacher/test/answer/${data.id}`)}>
+            <TableRow key={data.id} className="hover:cursor-pointer hover:shadow-xl" onClick={() => navigate(`/teacher/test/answertabs/${data.userid}`)}>
               <TableCell>{data.firstname}</TableCell>
               <TableCell>{data.lastname}</TableCell>
             </TableRow>

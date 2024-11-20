@@ -346,3 +346,99 @@ func (app *application) saveStudentSolvedTest(w http.ResponseWriter, r *http.Req
 		return
 	}
 }
+
+func (app *application) serveDrukSerwowaniaSniadanDoPokojuAnswers(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idParam := vars["userID"]
+	userID, err := strconv.Atoi(idParam)
+	if err != nil {
+		app.clientError(w, 400)
+		return
+	}
+
+	data, err := app.answers.GetDrukSerwowaniaSniadanDoPokoju(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+func (app *application) serveDrukUslugPralniczych(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idParam := vars["userID"]
+	userID, err := strconv.Atoi(idParam)
+	if err != nil {
+		app.clientError(w, 400)
+		return
+	}
+
+	data, err := app.answers.GetDrukUslugPralniczych(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+func (app *application) serveKartaKontrolnaSprzataniaPokoju(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idParam := vars["userID"]
+	userID, err := strconv.Atoi(idParam)
+	if err != nil {
+		app.clientError(w, 400)
+		return
+	}
+
+	data, err := app.answers.GetKartaKontrolnaSprzataniaPokoju(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+func (app *application) serveKwitParkingowy(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idParam := vars["userID"]
+	userID, err := strconv.Atoi(idParam)
+	if err != nil {
+		app.clientError(w, 400)
+		return
+	}
+
+	data, err := app.answers.GetKwitParkingowy(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}
+func (app *application) serveWstawkaDlaGosciSpecjalnych(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idParam := vars["userID"]
+	userID, err := strconv.Atoi(idParam)
+	if err != nil {
+		app.clientError(w, 400)
+		return
+	}
+
+	data, err := app.answers.GetWstawkaDlaGosciSpecjalnych(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}

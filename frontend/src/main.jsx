@@ -14,11 +14,11 @@ import { Student } from './pages/Student';
 import TestResults from './components/TestResults';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoutes';
+import AnswerTabs from './components/answers/AnswersTabs';
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
-    // errorElement: <ErrorPage />,
   },{
     path: "/register",
     element: <Register />
@@ -48,7 +48,18 @@ const router = createBrowserRouter([
     loader: async({ request, params }) => {
       return fetch(`/test/${params.testId}`, { signal: request.signal });
     }
-  },{
+  },
+  
+  
+  {
+    path: `/teacher/test/answertabs/:userid`,
+    element: (
+      <ProtectedRoute element={<AnswerTabs />} requiredRole="teacher" />
+    )
+  },
+  
+  
+  {
     path: "/student/test/:testId",
     element: (
       <ProtectedRoute element={<Test />} requiredRole="student" />
