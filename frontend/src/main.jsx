@@ -15,32 +15,46 @@ import TestResults from './components/TestResults';
 import { AuthProvider } from './AuthContext';
 import ProtectedRoute from './ProtectedRoutes';
 import AnswerTabs from './components/answers/AnswersTabs';
+import KwitParkingowyAnswer from './components/answers/KwitParkingowyAnswer';
+import WstawkaDlaGosciSpecjalnychAnswer from './components/answers/WstawkaDlaGosciSpecjalnychAnswer';
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Login />,
-  },{
+  },
+  
+  {
     path: "/register",
     element: <Register />
-  },{
+  },
+  
+  {
     path: "/login",
     element: <Login />
-  },{
+  },
+  
+  {
     path: "/teacher",
     element: (
       <ProtectedRoute element={<Teacher />} requiredRole="teacher" />
     ),
-  },{
+  },
+  
+  {
     path: "/student",
     element: (
       <ProtectedRoute element={<Student />} requiredRole="student" />
     ),
-  },{
+  },
+  
+  {
     path: "/student/test",
     element: (
       <ProtectedRoute element={<Test />} requiredRole="student" />
     ),
-  },{
+  },
+  
+  {
     path: "/teacher/test/:testId",
     element: (
       <ProtectedRoute element={<TestResults />} requiredRole="teacher" />
@@ -50,7 +64,6 @@ const router = createBrowserRouter([
     }
   },
   
-  
   {
     path: `/teacher/test/answertabs/:userid`,
     element: (
@@ -58,7 +71,27 @@ const router = createBrowserRouter([
     )
   },
   
-  
+  {
+    path: "/teacher/test/1/odpowiedzi/kwitParkingowy/:userid",
+    element: (<ProtectedRoute element={<KwitParkingowyAnswer />} requiredRole="teacher"/>)
+  },
+  {
+    path: "/teacher/odpowiedzi/wstawkaDlaGosciSpecjalnych/:userid",
+    element: (<ProtectedRoute element={<WstawkaDlaGosciSpecjalnychAnswer />} requiredRole="teacher"/>)
+  },
+  {
+    path: "/teacher/test/1/odpowiedzi/kwitParkingowy/:userid",
+    element: (<ProtectedRoute element={<KwitParkingowyAnswer />} requiredRole="teacher"/>)
+  },
+  {
+    path: "/teacher/test/1/odpowiedzi/kwitParkingowy/:userid",
+    element: (<ProtectedRoute element={<KwitParkingowyAnswer />} requiredRole="teacher"/>)
+  },
+  {
+    path: "/teacher/test/1/odpowiedzi/kwitParkingowy/:userid",
+    element: (<ProtectedRoute element={<KwitParkingowyAnswer />} requiredRole="teacher"/>)
+  },
+
   {
     path: "/student/test/:testId",
     element: (

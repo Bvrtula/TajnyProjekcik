@@ -5,8 +5,12 @@ import { cn } from "@/lib/utils";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { useToast } from '../../hooks/use-toast';
+import { useParams, useNavigate } from 'react-router-dom';
 
-const KwitParkingowyAnswer = ({ userid }) => {
+const KwitParkingowyAnswer = () => {
+    const { userid } = useParams();
+    const navigate = useNavigate()
+    console.log(userid)
     const thClass = 'p-2 border-solid border-2 border-black w-3/12';
     const tdClass = 'p-2 border-solid border-2 border-black text-left';
     const [okresKorzystaniaOd, setOkresKorzystaniaOd] = useState('');
@@ -53,7 +57,8 @@ const KwitParkingowyAnswer = ({ userid }) => {
     };
 
     return (
-        <div className='my-[3%]'>
+        <div className='my-[3%] mx-[10%]'>
+            <Button onClick={() => navigate(`/teacher/test/answertabs/${userid}`)}>Powrót</Button>
             <form onSubmit={handleSubmit}>
                 <table className='w-full border-collapse'>
                     <tr>

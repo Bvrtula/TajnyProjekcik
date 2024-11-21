@@ -1,31 +1,20 @@
 import React, { useState } from 'react'
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-  } from "@/components/ui/tabs"
-import KwitParkingowyAnswer from './KwitParkingowyAnswer'
-import { useParams } from 'react-router-dom'
 
+import { useNavigate, useParams } from 'react-router-dom'
+import { Button } from '../ui/button'
 
 const AnswerTabs = () => {
   const { userid } = useParams();
+  const navigate = useNavigate()
   console.log(userid)
   return (
     <>
-        <div>
+        <p className='text-3xl text-center my-4'>
             ODPOWIEDZI
-        </div>
-        <div className='w-full flex justify-center'>
-        <Tabs defaultValue="account" className="w-[1400px]">
-        <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="kwit_parkingowy">kwit_parkingowy</TabsTrigger>
-        </TabsList>
-        <TabsContent value="kwit_parkingowy">
-            <KwitParkingowyAnswer userid={userid} />
-        </TabsContent>
-        </Tabs>
+        </p>
+        <div className='w-full flex gap-2 justify-center m-12'>
+          <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/kwitParkingowy/${userid}`)}>Kwit Parkingowy</Button>
+          <Button onClick={() => navigate(`/teacher/odpowiedzi/wstawkaDlaGosciSpecjalnych/${userid}`)}>Wstawka Dla Gości Specjalnych</Button>
         </div>
     </>
   )
