@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Input } from './ui/input';
+import React, { useState, useEffect } from 'react';
+import { Input } from '../ui/input';
 import { Calendar as CalendarIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -12,8 +12,11 @@ import {
 import { format } from 'date-fns';
 import { pl } from 'date-fns/locale';
 import { useToast } from '@/hooks/use-toast'
+import { useParams, useNavigate } from 'react-router-dom';
 
-const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
+const DrukUslugPralniczychAnswer = () => {
+  const { userid } = useParams();
+    const navigate = useNavigate()
   const thClass = 'p-2 border-solid border-2 border-black w-3/12';
   const tdClass = 'p-2 border-solid border-2 border-black text-left';
   const { toast } = useToast()
@@ -32,41 +35,39 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
     podpis_pracownika_realizujacego_zlecenie: '',
   });
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    console.log(name, value)
-    setData((prev) => ({ ...prev, [name]: value }));
-  };
+  useEffect(() => {
+    const fetchData = async () => {
+        try {
+            const response = await fetch(`http://localhost:4000/teacher/odpowiedzi/drukUslugPralniczych/${userid}`, {
+                method: 'GET',
+                credentials: 'include',
+            });
+            const result = await response.json();
+            if (result && result[0]) {
+                const { data_realizacji_uslugi, ...rest } = result[0];
+                setData(rest);
+                setDate(data_realizacji_uslugi) 
+            }
+        } catch (error) {
+            console.error('Error fetching data:', error);
+            toast({
+                title: 'Błąd',
+                description: 'Nie udało się pobrać odpowiedzi studenta.',
+            });
+        }
+    };
 
-  const handleSubmit = async (e) => {
+    fetchData();
+  }, [userid, toast]);
+
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-    data["data_realizacji_uslugi"] = date.toLocaleDateString('pl-PL', options)
-
-    try {
-        const response = await fetch("http://localhost:4000/student/egzamin/drukUslugPralniczych", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            credentials: "include",
-            body: JSON.stringify(data),
-        });
-        const result = await response.json();
-        toast({
-            title: "Sukces",
-            description: `Pomyślnie przesłano odpowiedzi`
-          });
-        onFormSubmit();
-    } catch (error) {
-        toast({
-            title: "Błąd",
-            description: `Nie udało się utworzyć użytkownika: ${error}`,
-        });
-    }
 };
 
   return (
     <>
-    <div className="my-[3%]">
+    <div className="my-[3%] mx-[10%]">
+    <Button onClick={() => navigate(`/teacher/test/answertabs/${userid}`)}>Powrót</Button>
       <form onSubmit={handleSubmit} method="post">
         <table className="w-full border-collapse">
           <thead>
@@ -83,7 +84,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                     className="h-full"
                     rows={2}
                     name="nazwisko_i_imie_goscia"
-                    onChange={handleChange}
+                    value={data.nazwisko_i_imie_goscia} disabled={true}
                   />
                 </div>
               </td>
@@ -95,7 +96,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                     className="h-full"
                     rows={2}
                     name="nr_pokoju"
-                    onChange={handleChange}
+                    value={data.nr_pokoju} disabled={true}
                   />
                 </div>
               </td>
@@ -116,19 +117,10 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                     >
                       <CalendarIcon />
                       {date
-                        ? format(date, 'PPP', { locale: pl })
+                        ? date
                         : <span>Wybierz datę</span>}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-auto p-0">
-                    <Calendar
-                      mode="single"
-                      selected={date}
-                      onSelect={setDate}
-                      locale={pl}
-                      initialFocus
-                    />
-                  </PopoverContent>
                 </Popover>
               </td>
             </tr>
@@ -147,7 +139,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                   type="number"
                   name="ilosc_koszula_damska_meska"
                   className="h-full"
-                  onChange={handleChange}
+                  value={data.ilosc_koszula_damska_meska} disabled={true}
                 />
               </td>
               <td className={tdClass} colSpan={1}><h2>23</h2></td>
@@ -165,7 +157,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                   type="number"
                   name="ilosc_spódnica_lub_spodnie_damski"
                   className="h-full"
-                  onChange={handleChange}
+                  value={data.ilosc_spódnica_lub_spodnie_damski} disabled={true}
                 />
               </td>
               <td className={tdClass} colSpan={1}><h2>28</h2></td>
@@ -183,7 +175,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                   type="number"
                   name="ilosc_garnitur_damski"
                   className="h-full"
-                  onChange={handleChange}
+                  value={data.ilosc_garnitur_damski} disabled={true}
                 />
               </td>
               <td className={tdClass} colSpan={1}><h2>45</h2></td>
@@ -202,7 +194,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                   type="number"
                   name="ilosc_garnitur_meski"
                   className="h-full"
-                  onChange={handleChange}
+                  value={data.ilosc_garnitur_meski} disabled={true}
                 />
               </td>
               <td className={tdClass} colSpan={1}><h2>48</h2></td>
@@ -220,7 +212,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                   type="number"
                   name="ilosc_usluga_ekspresowa"
                   className="h-full"
-                  onChange={handleChange}
+                  value={data.ilosc_usluga_ekspresowa} disabled={true}
                 />
               </td>
               <td className={tdClass} colSpan={1}><h2>35</h2></td>
@@ -238,7 +230,7 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                   type="number"
                   name="do_zaplaty"
                   className="h-full"
-                  onChange={handleChange}
+                  value={data.do_zaplaty} disabled={true}
                 />
               </td>
             </tr>
@@ -248,15 +240,12 @@ const DrukUslugPralniczychAnswer = ({ isSubmitted, onFormSubmit }) => {
                 <Input
                   className="h-full"
                   name="podpis_pracownika_realizujacego_zlecenie"
-                  onChange={handleChange}
+                  value={data.podpis_pracownika_realizujacego_zlecenie} disabled={true}
                 />
               </td>
             </tr>
           </tbody>
         </table>
-        <Button type="submit" disabled={isSubmitted}>
-          {isSubmitted ? 'Przesłano odpowiedzi' : 'Prześlij odpowiedzi'}
-        </Button>
       </form>
     </div>
   </>

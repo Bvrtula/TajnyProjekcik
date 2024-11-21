@@ -17,6 +17,8 @@ import ProtectedRoute from './ProtectedRoutes';
 import AnswerTabs from './components/answers/AnswersTabs';
 import KwitParkingowyAnswer from './components/answers/KwitParkingowyAnswer';
 import WstawkaDlaGosciSpecjalnychAnswer from './components/answers/WstawkaDlaGosciSpecjalnychAnswer';
+import DrukUslugPralniczychAnswer from './components/answers/DrukUslugPralniczychAnswer';
+import KartaKontrolnaSprzataniaPokojuAnswer from './components/answers/KartaKontrolnaSprzataniaPokojuAnswer';
 const router = createBrowserRouter([
   {
     path: "/",
@@ -76,16 +78,16 @@ const router = createBrowserRouter([
     element: (<ProtectedRoute element={<KwitParkingowyAnswer />} requiredRole="teacher"/>)
   },
   {
-    path: "/teacher/odpowiedzi/wstawkaDlaGosciSpecjalnych/:userid",
+    path: "/teacher/test/1/odpowiedzi/wstawkaDlaGosciSpecjalnych/:userid",
     element: (<ProtectedRoute element={<WstawkaDlaGosciSpecjalnychAnswer />} requiredRole="teacher"/>)
   },
   {
-    path: "/teacher/test/1/odpowiedzi/kwitParkingowy/:userid",
-    element: (<ProtectedRoute element={<KwitParkingowyAnswer />} requiredRole="teacher"/>)
+    path: "/teacher/test/1/odpowiedzi/drukUslugPralniczych/:userid",
+    element: (<ProtectedRoute element={<DrukUslugPralniczychAnswer />} requiredRole="teacher"/>)
   },
   {
-    path: "/teacher/test/1/odpowiedzi/kwitParkingowy/:userid",
-    element: (<ProtectedRoute element={<KwitParkingowyAnswer />} requiredRole="teacher"/>)
+    path: "/teacher/test/1/odpowiedzi/kartaKontrolnaSprzataniaPokoju/:userid",
+    element: (<ProtectedRoute element={<KartaKontrolnaSprzataniaPokojuAnswer />} requiredRole="teacher"/>)
   },
   {
     path: "/teacher/test/1/odpowiedzi/kwitParkingowy/:userid",

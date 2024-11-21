@@ -14,7 +14,9 @@ const AnswerTabs = () => {
         </p>
         <div className='w-full flex gap-2 justify-center m-12'>
           <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/kwitParkingowy/${userid}`)}>Kwit Parkingowy</Button>
-          <Button onClick={() => navigate(`/teacher/odpowiedzi/wstawkaDlaGosciSpecjalnych/${userid}`)}>Wstawka Dla Gości Specjalnych</Button>
+          <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/wstawkaDlaGosciSpecjalnych/${userid}`)}>Wstawka Dla Gości Specjalnych</Button>
+          <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/drukUslugPralniczych/${userid}`)}>Druk Usług Pralniczych</Button>
+          <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/kartaKontrolnaSprzataniaPokoju/${userid}`)}>Karta Kontrolna Sprzatania Pokoju</Button>
         </div>
     </>
   )
