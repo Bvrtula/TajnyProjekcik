@@ -43,10 +43,10 @@ const AnswerTabs = () => {
         <hr className='m-2 w-full'></hr>
         <div className='w-full flex gap-2 justify-center m-12'>
           <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/kwitParkingowy/${userid}`)}>Kwit Parkingowy</Button>
-          <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/wstawkaDlaGosciSpecjalnych/${userid}`)}>Wstawka Dla Gości Specjalnych</Button>
           <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/drukUslugPralniczych/${userid}`)}>Druk Usług Pralniczych</Button>
           <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/kartaKontrolnaSprzataniaPokoju/${userid}`)}>Karta Kontrolna Sprzatania Pokoju</Button>
           <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/drukSerwowaniaSniadanDoPokoju/${userid}`)}>Druk Serwowania Śniadań Do Pokoju</Button>
+          <Button onClick={() => navigate(`/teacher/test/1/odpowiedzi/wstawkaDlaGosciSpecjalnych/${userid}`)}>Wstawka Dla Gości Specjalnych</Button>
         </div>
     </div>
   )

@@ -12,6 +12,7 @@ import DrukUslugPralniczych from '@/components/DrukUslugPralniczych'
 import WstawkaDlaGosciSpecjalnych from '@/components/WstawkaDlaGosciSpecjalnych'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
+import ZadanieEgzaminacyjne from '@/components/polecenia/ZadanieEgzaminacyjne'
 
 const Test = () => {
     const navigate = useNavigate()
@@ -40,11 +41,17 @@ const Test = () => {
     };
   return (
     <>
-        <div>
-            POLECENIE EGZAMINU...
-            <Button onClick={handleSolved}>Zakończ</Button>
+
+        <div className='flex justify-center'>
+        <iframe
+            src="/zadanie.pdf"
+            style={{ width: '60%', height: "570px", border: 'none' }}
+        ></iframe>
         </div>
-        <div className='w-full flex justify-center'>
+        <div className="flex justify-center my-1">
+            <Button onClick={handleSolved}>Zakończ Egzamin</Button>
+        </div>
+        <div className='w-full flex justify-center my-2'>
         <Tabs defaultValue="account" className="w-[1400px]">
         <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="karta_kontrolna_sprzatania_pokoju">karta_kontrolna_sprzatania_pokoju</TabsTrigger>
