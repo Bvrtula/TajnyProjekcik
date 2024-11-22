@@ -506,6 +506,5 @@ func (a *AnswerModel) GetWstawkaDlaGosciSpecjalnych(userID int) ([]*WstawkaDlaGo
 	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-	fmt.Println(data)
 	return data, nil
 }

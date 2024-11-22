@@ -12,7 +12,7 @@ import DrukUslugPralniczych from '@/components/DrukUslugPralniczych'
 import WstawkaDlaGosciSpecjalnych from '@/components/WstawkaDlaGosciSpecjalnych'
 import { Button } from '@/components/ui/button'
 import { useNavigate } from 'react-router-dom'
-import ZadanieEgzaminacyjne from '@/components/polecenia/ZadanieEgzaminacyjne'
+
 
 const Test = () => {
     const navigate = useNavigate()
