@@ -87,14 +87,14 @@ const WstawkaDlaGosciSpecjalnychAnswer = () => {
                 });
                 const result = await response.json();
                 if (isMounted.current && result && result[0]) {
-                    const { zyczenia_dodatkowe, termin_pobytu_od, termin_pobytu_do, termin_wykonania_uslugi, data_zlecenia_uslugi, ...rest } = result[0];
+                    const { termin_pobytu_od, termin_pobytu_do, termin_wykonania_uslugi, data_zlecenia_uslugi, ...rest } = result[0];
                     setData(rest);
                     setTerminPobytuOd(termin_pobytu_od); 
                     setTerminPobytuDo(termin_pobytu_do); 
                     setTerminWykonaniaUslugi(termin_wykonania_uslugi); 
                     setDataZleceniaUslugi(data_zlecenia_uslugi); 
                     console.log(terminPobytuOd, terminPobytuDo, terminWykonaniaUslugi, dataZleceniaUslugi)
-                    setZyczeniaDodatkowe(dostarczoneProduktyIUsługi.find(item => item.id.toString() === zyczeniaDodatkowe)?.item || '');
+                    
                 }
             } catch (error) {
                 if (isMounted.current) {

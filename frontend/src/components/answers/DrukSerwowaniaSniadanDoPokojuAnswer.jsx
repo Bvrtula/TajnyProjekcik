@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import {
   Popover,
   PopoverContent,
@@ -13,8 +13,11 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from '@/components/ui/textarea'
 import { useToast } from '@/hooks/use-toast'
+import { useParams, useNavigate } from 'react-router-dom';
 
-const DrukSerwowaniaSniadanDoPokoju = ({ isSubmitted, onFormSubmit }) => {
+const DrukSerwowaniaSniadanDoPokojuAnswer = () => {
+    const { userid } = useParams();
+    const navigate = useNavigate()
     const thClass = "p-2 border-solid border-2 border-black text-center"
     const tdClass = "p-2 border-solid border-2 border-black text-left w-3/12"
     const [date, setDate] = useState()
@@ -51,49 +54,39 @@ const DrukSerwowaniaSniadanDoPokoju = ({ isSubmitted, onFormSubmit }) => {
         jogurt_naturalny_ilosc: "",
         podpis_osoby: "",
       })
-  
-    const handleChange = (e) => {
-        const {name, value} = e.target
-        console.log(name, value)
-        setData((prev) => {
-          return {...prev, [name]:value}
-        })
-    }
+
+      useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const response = await fetch(`http://localhost:4000/teacher/odpowiedzi/drukSerwowaniaSniadanDoPokoju/${userid}`, {
+                    method: 'GET',
+                    credentials: 'include',
+                });
+                const result = await response.json();
+                if (result && result[0]) {
+                    const { termin, ...rest } = result[0];
+                    setData(rest);
+                    setDate(termin)
+                }
+            } catch (error) {
+                console.error('Error fetching data:', error);
+                toast({
+                    title: 'Błąd',
+                    description: 'Nie udało się pobrać odpowiedzi studenta.',
+                });
+            }
+        };
+
+        fetchData();
+    }, [userid, toast]);
 
     const handleSubmit = (e) => {
-      e.preventDefault()
-      const options = { weekday: 'long', year: 'numeric', month: 'short', day: 'numeric' };
-      data["termin"] = date.toLocaleDateString('pl-PL', options)
-      data["przedzial_czasowy_od"] = startHour+":"+startMinute
-      data["przedzial_czasowy_do"] = endHour+":"+endMinute
-      console.log(data)
-
-      fetch("http://localhost:4000/student/egzamin/drukSerwowaniaSniadanDoPokoju", {
-        method: "POST",
-        headers: {
-        "Content-Type": "Application/JSON",
-        },
-        credentials: "include",
-        body: JSON.stringify(data),
-        })
-        .then((respose) => respose.json())
-        .then((data) =>  console.log(data))
-        .then(() => toast({
-          title: "Sukces",
-          description: `Pomyślnie przesłano odpowiedzi`
-          }))
-        .then(() => onFormSubmit())  
-        .catch((error) => {
-          console.log(error)
-          toast({
-            title: "Błąd",
-            description: `Nie udało się utworzyć użytkownika: ${error}`,
-        });
-        });
-    }
+        e.preventDefault();
+    };
   return (
     <>
-    <div className='my-[3%]'>
+    <div className='my-[3%] mx-[10%]'>
+    <Button onClick={() => navigate(`/teacher/test/answertabs/${userid}`)}>Powrót</Button>
     <form method="post" onSubmit={handleSubmit}>
     <table className='w-full border-collapse'>
         <tr>
@@ -107,23 +100,20 @@ const DrukSerwowaniaSniadanDoPokoju = ({ isSubmitted, onFormSubmit }) => {
                     <PopoverTrigger asChild>
                         <Button variant={"outline"} className={cn("w-[280px] justify-start text-left font-normal",!date && "text-muted-foreground")}>
                         <CalendarIcon />
-                        {date ? format(date, "PPP", { locale: pl }) : <span>Wybierz datę</span>}
+                        {date ? date : <span>Wybierz datę</span>}
                         </Button>
                     </PopoverTrigger>
-                    <PopoverContent className="w-auto p-0">
-                        <Calendar mode="single" selected={date} onSelect={setDate}  locale={pl} initialFocus/>
-                    </PopoverContent>
                     </Popover>
               </div>
             </td>
             <td className={tdClass} colSpan={2}>
               <h2>Liczba osób:</h2>
-              <Input className="box-border my-2" type="number" onChange={handleChange} name="liczba_osob" placeholder="1" required />
+              <Input className="box-border my-2" type="number" value={data.liczba_osob} disabled={true} name="liczba_osob" placeholder="1" required />
             </td>
             <td className={tdClass} colSpan={2}>
               <h2>Numer pokoju:</h2>
               <div>
-                <Input className="box-border my-2" type="number" onChange={handleChange} name="nr_pokoju" placeholder="1" required />
+                <Input className="box-border my-2" type="number" value={data.nr_pokoju} disabled={true} name="nr_pokoju" placeholder="1" required />
               </div>
             </td>
         </tr>
@@ -134,13 +124,13 @@ const DrukSerwowaniaSniadanDoPokoju = ({ isSubmitted, onFormSubmit }) => {
               <div className='flex items-center gap-1'>
                 <h2>Od:</h2>
                 <div className='flex items-center gap-1'>
-                  <Input className="box-border my-2 w-1/4" type="number" placeholder="08" onChange={(e) => setStartHour(e.target.value)} required />:<Input className="box-border my-2 w-1/4" onChange={(e) => setStartMinute(e.target.value)} type="number" placeholder="30" required />
+                  <Input className="box-border my-2"  value={data.przedzial_czasowy_od} disabled={true} />
                 </div>
               </div>
               <div className='flex items-center gap-1'>
                 <h2>Do:</h2>
                 <div className='flex items-center gap-1'>
-                  <Input className="box-border my-2 w-1/4" type="number" placeholder="09" onChange={(e) => setEndHour(e.target.value)} required />:<Input className="box-border my-2 w-1/4" type="number" onChange={(e) => setEndMinute(e.target.value)} placeholder="00" required />
+                  <Input className="box-border my-2"  value={data.przedzial_czasowy_do} disabled={true} />
                 </div>
               </div>
             </div>
@@ -150,7 +140,7 @@ const DrukSerwowaniaSniadanDoPokoju = ({ isSubmitted, onFormSubmit }) => {
             <td className={tdClass} colSpan={6}>
               <h2>Dostarczone produkty:</h2>
               <div className='w-full my-2'>
-                <Textarea className="h-full" rows={2} onChange={handleChange} name="dostarczone_produkty"/>
+                <Textarea className="h-full" rows={2} value={data.dostarczone_produkty} disabled={true} name="dostarczone_produkty"/>
               </div>
             </td>
         </tr>
@@ -164,65 +154,62 @@ const DrukSerwowaniaSniadanDoPokoju = ({ isSubmitted, onFormSubmit }) => {
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Kawa czarna</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="kawa_czarna_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.kawa_czarna_ilosc} disabled={true} name="kawa_czarna_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Pieczywo mieszane</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="kawa_z_mlekiem_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.kawa_z_mlekiem_ilosc} disabled={true} name="kawa_z_mlekiem_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Dżem truskawkowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="dzem__ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.dzem_truskawkowy_ilosc} disabled={true} name="dzem_truskawkowy_ilosc" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Kawa z mlekiem</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="kawa_z_mlekiem_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.kawa_z_mlekiem_ilosc} disabled={true} name="kawa_z_mlekiem_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Tosty</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="tosty_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.tosty_ilosc} disabled={true} name="tosty_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Dżem wiśniowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="dzem_wisniowy_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.dzem_wisniowy_ilosc} disabled={true} name="dzem_wisniowy_ilosc" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Herbata czarna</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="herbata_czarna_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.herbata_czarna_ilosc} disabled={true} name="herbata_czarna_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Rogaliki</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="rogaliki_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.rogaliki_ilosc} disabled={true} name="rogaliki_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Miód</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="miod_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.miod_ilosc} disabled={true} name="miod_ilosc" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Herbata zielona</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="herbata_zielona_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.herbata_zielona_ilosc} disabled={true} name="herbata_zielona_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Parówki</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="parowki_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.parowki_ilosc} disabled={true} name="parowki_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Owoce świeże (truskawki)</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="owoce_swieze_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.owoce_swieze_ilosc} disabled={true} name="owoce_swieze_ilosc" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Sok pomarańczowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="sok_pomaranczowy_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.sok_pomaranczowy_ilosc} disabled={true} name="sok_pomaranczowy_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Jajecznica</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" onChange={handleChange} name="jajecznica_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2" type="number" value={data.jajecznica_ilosc} disabled={true} name="jajecznica_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Owoce mrożone (truskawki, jagody i mango)</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="owoce_mrozone_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.owoce_mrozone_ilosc} disabled={true} name="owoce_mrozone_ilosc" placeholder="0" /></td>
         </tr>
         <tr>
             <th className={thClass} colSpan={1}>Sok jabłkowy</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="sok_jablkowy_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.sok_jablkowy_ilosc} disabled={true} name="sok_jablkowy_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Jajka sadzone</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="jajka_sadzone_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.jajka_sadzone_ilosc} disabled={true} name="jajka_sadzone_ilosc" placeholder="0" /></td>
             <th className={thClass} colSpan={1}>Jogurt naturalny</th>
-            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" onChange={handleChange} name="jogurt_naturalny_ilosc" placeholder="0" /></td>
+            <td className={thClass} colSpan={1}><Input className="box-border my-2 " type="number" value={data.jogurt_naturalny_ilosc} disabled={true} name="jogurt_naturalny_ilosc" placeholder="0" /></td>
         </tr>
        
         <tr>
             <th className={thClass} colSpan={2}>PODPIS OSOBY REALIZĄCEJ KONTROLĘ</th>
-            <td className={tdClass + "h-full"} colSpan={4}><Input type="text" onChange={handleChange} name="podpis_osoby" required/></td>
+            <td className={tdClass + "h-full"} colSpan={4}><Input type="text" value={data.podpis_osoby} disabled={true} name="podpis_osoby" required/></td>
         </tr>
     </table>
-    <Button type="submit" disabled={isSubmitted}>
-      {isSubmitted ? 'Przesłano odpowiedzi' : 'Prześlij odpowiedzi'}
-    </Button>
     </form>
     </div>
     </>
   )
 }
 
-export default DrukSerwowaniaSniadanDoPokoju
+export default DrukSerwowaniaSniadanDoPokojuAnswer

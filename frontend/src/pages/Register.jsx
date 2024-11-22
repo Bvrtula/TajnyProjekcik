@@ -26,11 +26,12 @@ const Register = () => {
   const handleSubmit = (event) => {
     event.preventDefault();
     const userData = {
-    firstname: firstname,
-    lastname: lastname,
-    studentClass, studentClass,
-    email: email,
-    password: password,
+      firstname,
+      lastname,
+      studentClass,
+      email,
+      password,
+      role: "student"
     }
 
     console.log(userData)

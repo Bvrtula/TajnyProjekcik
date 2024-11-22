@@ -71,7 +71,8 @@ func main() {
 	r.HandleFunc("/teacher/odpowiedzi/kartaKontrolnaSprzataniaPokoju/{userID}", app.serveKartaKontrolnaSprzataniaPokoju)
 	r.HandleFunc("/teacher/odpowiedzi/kwitParkingowy/{userID}", app.serveKwitParkingowy)
 	r.HandleFunc("/teacher/odpowiedzi/wstawkaDlaGosciSpecjalnych/{userID}", app.serveWstawkaDlaGosciSpecjalnych)
-	// r.HandleFunc("/user/handleAnswers", app.handleAnswers)
+	r.HandleFunc("/user/data/{userID}", app.serveUserData)
+
 	corsHandler := handlers.CORS(
 		handlers.AllowedOrigins([]string{"http://localhost:5173"}),
 		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}),

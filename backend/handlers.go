@@ -442,3 +442,22 @@ func (app *application) serveWstawkaDlaGosciSpecjalnych(w http.ResponseWriter, r
 
 	json.NewEncoder(w).Encode(data)
 }
+func (app *application) serveUserData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
+	vars := mux.Vars(r)
+	idParam := vars["userID"]
+	userID, err := strconv.Atoi(idParam)
+	if err != nil {
+		app.clientError(w, 400)
+		return
+	}
+
+	data, err := app.users.GetUserByID(userID)
+	if err != nil {
+		app.serverError(w, err)
+		return
+	}
+
+	json.NewEncoder(w).Encode(data)
+}

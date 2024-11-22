@@ -11,7 +11,7 @@ type User struct {
 	Id        int    `json:"id"`
 	Firstname string `json:"firstname"`
 	Lastname  string `json:"lastname"`
-	Class     string `json:"class"`
+	Class     string `json:"studentClass"`
 	Email     string `json:"email"`
 	Password  string `json:"password"`
 	Role      string `json:"role"`
@@ -50,6 +50,19 @@ func (u *UserModel) Login(email, password string) (*User, error) {
 
 	err = bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
 	if err != nil {
+		return nil, err
+	}
+	return user, nil
+}
+
+func (u *UserModel) GetUserByID(userID int) (*User, error) {
+	row := u.DB.QueryRow(`SELECT id, firstname, lastname, class, email, password, role FROM users WHERE id=?`, userID)
+	user := &User{}
+	err := row.Scan(&user.Id, &user.Firstname, &user.Lastname, &user.Class, &user.Email, &user.Password, &user.Role)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, ErrNoRecord
+		}
 		return nil, err
 	}
 	return user, nil
